@@ -6,18 +6,18 @@ import RequestCard from "@/components/RequestCard";
 import { categories, mockRequests } from "@/utils/data";
 import type { Category } from "@/types";
 
-function ExplorarContent() {
+function ExploreContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("categoria") as Category | null;
-  const [activeCategory, setActiveCategory] = useState<Category | "todas">(
+  const initialCategory = searchParams.get("category") as Category | null;
+  const [activeCategory, setActiveCategory] = useState<Category | "all">(
     initialCategory && categories.some((c) => c.id === initialCategory)
       ? initialCategory
-      : "todas"
+      : "all"
   );
   const [search, setSearch] = useState("");
 
   const filtered = mockRequests.filter((r) => {
-    if (activeCategory !== "todas" && r.category !== activeCategory) return false;
+    if (activeCategory !== "all" && r.category !== activeCategory) return false;
     if (search && !r.title.toLowerCase().includes(search.toLowerCase()) && !r.description.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -26,13 +26,13 @@ function ExplorarContent() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Explorar solicitudes</h1>
-          <p className="mt-1 text-muted">Encuentra a quien necesita ayuda o ofrece la tuya.</p>
+          <h1 className="text-3xl font-bold text-foreground">Browse requests</h1>
+          <p className="mt-1 text-muted">Find someone who needs help or offer yours.</p>
         </div>
         <div className="relative">
           <input
             type="text"
-            placeholder="Buscar..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full sm:w-72 rounded-full border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
@@ -42,14 +42,14 @@ function ExplorarContent() {
 
       <div className="mt-6 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         <button
-          onClick={() => setActiveCategory("todas")}
+          onClick={() => setActiveCategory("all")}
           className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-            activeCategory === "todas"
+            activeCategory === "all"
               ? "bg-primary text-white"
               : "bg-muted-light text-muted hover:bg-border"
           }`}
         >
-          Todas
+          All
         </button>
         {categories.map((cat) => (
           <button
@@ -75,29 +75,29 @@ function ExplorarContent() {
       {filtered.length === 0 && (
         <div className="mt-12 text-center">
           <p className="text-4xl">🔍</p>
-          <p className="mt-2 text-lg font-medium text-foreground">No se encontraron solicitudes</p>
-          <p className="mt-1 text-sm text-muted">Intenta con otra búsqueda o categoría.</p>
+          <p className="mt-2 text-lg font-medium text-foreground">No requests found</p>
+          <p className="mt-1 text-sm text-muted">Try a different search or category.</p>
         </div>
       )}
     </div>
   );
 }
 
-export default function ExplorarPage() {
+export default function ExplorePage() {
   return (
     <Suspense
       fallback={
         <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Explorar solicitudes</h1>
-              <p className="mt-1 text-muted">Cargando...</p>
+              <h1 className="text-3xl font-bold text-foreground">Browse requests</h1>
+              <p className="mt-1 text-muted">Loading...</p>
             </div>
           </div>
         </div>
       }
     >
-      <ExplorarContent />
+      <ExploreContent />
     </Suspense>
   );
 }

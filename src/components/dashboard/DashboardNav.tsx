@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import Logo from "@/components/Logo";
 
 const navItems = [
-  { href: "/dashboard", label: "Resumen", icon: "📊", exact: true },
-  { href: "/dashboard/trabajos", label: "Trabajos", icon: "🔧" },
-  { href: "/dashboard/comentarios", label: "Comentarios", icon: "💬" },
+  { href: "/dashboard", label: "Overview", icon: "📊", exact: true },
+  { href: "/dashboard/jobs", label: "Jobs", icon: "🔧" },
+  { href: "/dashboard/comments", label: "Comments", icon: "💬" },
   { href: "/dashboard/chats", label: "Chats", icon: "💭" },
-  { href: "/dashboard/configuracion", label: "Configuración", icon: "⚙️" },
+  { href: "/dashboard/settings", label: "Settings", icon: "⚙️" },
 ];
 
 export default function DashboardNav({
@@ -26,9 +27,9 @@ export default function DashboardNav({
       <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card lg:flex">
         <a
           href="/"
-          className="flex items-center gap-2 border-b border-border px-5 py-4 text-lg font-bold text-foreground"
+          className="flex items-center gap-2 border-b border-border px-5 py-4 text-lg font-bold text-foreground transition-opacity hover:opacity-80"
         >
-          <span>🏘️</span> Veci
+          <Logo />
         </a>
 
         <nav className="flex-1 space-y-1 p-3">
@@ -67,7 +68,7 @@ export default function DashboardNav({
             onClick={() => signOut({ callbackUrl: "/" })}
             className="mt-4 w-full rounded-full border border-border px-4 py-2 text-sm font-medium text-muted hover:bg-card-hover hover:text-foreground transition-colors"
           >
-            Cerrar sesión
+            Sign out
           </button>
         </div>
       </aside>

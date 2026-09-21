@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginSchema, type LoginValues } from "@/lib/schemas";
+import { LogoMark } from "@/components/Logo";
 
 function LoginForm() {
   const router = useRouter();
@@ -30,7 +31,7 @@ function LoginForm() {
     });
 
     if (result?.error) {
-      setServerError("Credenciales inválidas. Verifica tu email y contraseña.");
+      setServerError("Invalid credentials. Check your email and password.");
       return;
     }
 
@@ -42,11 +43,11 @@ function LoginForm() {
   return (
     <div className="mx-auto flex max-w-md flex-1 flex-col justify-center px-4 py-12 sm:px-6">
       <div className="text-center">
-        <span className="text-4xl">🏘️</span>
+        <LogoMark className="mx-auto h-14 w-14" />
         <h1 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
-          Bienvenido de vuelta
+          Welcome back
         </h1>
-        <p className="mt-1 text-muted">Inicia sesión para seguir ayudando a tus vecinos.</p>
+        <p className="mt-1 text-muted">Sign in to keep helping your neighbors.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5 noValidate">
@@ -67,7 +68,7 @@ function LoginForm() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-foreground">
-            Contraseña
+            Password
           </label>
           <input
             id="password"
@@ -91,14 +92,14 @@ function LoginForm() {
           disabled={isSubmitting}
           className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Iniciando..." : "Iniciar sesión"}
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">
-        ¿Aún no tienes cuenta?{" "}
+        Don&apos;t have an account yet?{" "}
         <Link href="/register" className="font-medium text-primary hover:text-primary-hover">
-          Regístrate gratis
+          Sign up free
         </Link>
       </p>
     </div>
@@ -110,7 +111,7 @@ export default function LoginPage() {
     <Suspense
       fallback={
         <div className="mx-auto flex max-w-md flex-1 flex-col justify-center px-4 py-12 sm:px-6">
-          <p className="text-center text-muted">Cargando...</p>
+          <p className="text-center text-muted">Loading...</p>
         </div>
       }
     >

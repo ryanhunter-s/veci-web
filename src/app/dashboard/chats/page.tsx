@@ -59,7 +59,7 @@ export default function ChatsPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Chats</h1>
         <p className="mt-1 text-muted">
-          Conversaciones con los vecinos que respondieron tus solicitudes.
+          Conversations with the neighbors who responded to your requests.
         </p>
       </div>
 
@@ -99,7 +99,7 @@ export default function ChatsPage() {
                   </p>
                   {chat.requestTitle && (
                     <p className="mt-0.5 truncate text-xs text-primary/70">
-                      sobre: {chat.requestTitle}
+                      about: {chat.requestTitle}
                     </p>
                   )}
                 </div>
@@ -115,7 +115,7 @@ export default function ChatsPage() {
           {chats.length === 0 && (
             <div className="rounded-2xl border border-dashed border-border py-16 text-center">
               <p className="text-3xl">💭</p>
-              <p className="mt-2 text-sm font-medium text-foreground">Sin conversaciones</p>
+              <p className="mt-2 text-sm font-medium text-foreground">No conversations</p>
             </div>
           )}
         </div>
@@ -166,7 +166,7 @@ export default function ChatsPage() {
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                  placeholder="Escribe un mensaje..."
+                  placeholder="Write a message..."
                   className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                 />
                 <button
@@ -174,16 +174,16 @@ export default function ChatsPage() {
                   className="rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-50"
                   disabled={!draft.trim()}
                 >
-                  Enviar
+                  Send
                 </button>
               </div>
             </>
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
               <p className="text-3xl">💬</p>
-              <p className="mt-2 font-medium text-foreground">Selecciona una conversación</p>
+              <p className="mt-2 font-medium text-foreground">Select a conversation</p>
               <p className="mt-1 text-sm text-muted">
-                Elige un chat para ver los mensajes.
+                Choose a chat to see the messages.
               </p>
             </div>
           )}

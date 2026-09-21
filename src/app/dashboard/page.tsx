@@ -22,13 +22,13 @@ export default function DashboardOverview() {
     ...mockJobs.map((j) => ({
       id: `j-${j.id}`,
       type: "trabajo" as const,
-      text: `Trabajo con ${j.helperName} pasó a "${jobStatusStyles[j.status].label}"`,
+      text: `Job with ${j.helperName} moved to "${jobStatusStyles[j.status].label}"`,
       date: j.acceptedAt,
     })),
     ...mockComments.map((c) => ({
       id: `c-${c.id}`,
       type: "comentario" as const,
-      text: `Comentario de ${c.author}: "${c.content.slice(0, 60)}..."`,
+      text: `Comment from ${c.author}: "${c.content.slice(0, 60)}..."`,
       date: c.createdAt,
     })),
     ...mockChats.flatMap((chat) =>
@@ -37,7 +37,7 @@ export default function DashboardOverview() {
         .map((m) => ({
           id: `m-${m.id}`,
           type: "chat" as const,
-          text: `Mensaje de ${chat.participantName}: "${m.content.slice(0, 60)}..."`,
+          text: `Message from ${chat.participantName}: "${m.content.slice(0, 60)}..."`,
           date: m.sentAt,
         }))
     ),
@@ -52,17 +52,17 @@ export default function DashboardOverview() {
   };
 
   const stats = [
-    { label: "Trabajos activos", value: activeJobs.length, icon: "🔧", href: "/dashboard/trabajos", color: "text-sky-600 bg-sky-100" },
-    { label: "Trabajos completados", value: completedJobs.length, icon: "✅", href: "/dashboard/trabajos", color: "text-green-600 bg-green-100" },
-    { label: "Comentarios por moderar", value: pendingComments.length, icon: "💬", href: "/dashboard/comentarios", color: "text-amber-600 bg-amber-100" },
-    { label: "Mensajes sin leer", value: unreadMessages, icon: "💭", href: "/dashboard/chats", color: "text-primary bg-primary-light" },
+    { label: "Active jobs", value: activeJobs.length, icon: "🔧", href: "/dashboard/jobs", color: "text-sky-600 bg-sky-100" },
+    { label: "Completed jobs", value: completedJobs.length, icon: "✅", href: "/dashboard/jobs", color: "text-green-600 bg-green-100" },
+    { label: "Comments to moderate", value: pendingComments.length, icon: "💬", href: "/dashboard/comments", color: "text-amber-600 bg-amber-100" },
+    { label: "Unread messages", value: unreadMessages, icon: "💭", href: "/dashboard/chats", color: "text-primary bg-primary-light" },
   ];
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Resumen</h1>
-        <p className="mt-1 text-muted">Esto es lo que ocurre en tu comunidad hoy.</p>
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Overview</h1>
+        <p className="mt-1 text-muted">This is what&apos;s happening in your community today.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -84,9 +84,9 @@ export default function DashboardOverview() {
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-foreground">Actividad reciente</h2>
-            <Link href="/dashboard/trabajos" className="text-sm text-primary hover:text-primary-hover transition-colors">
-              Ver todo
+            <h2 className="text-lg font-semibold text-foreground">Recent activity</h2>
+            <Link href="/dashboard/jobs" className="text-sm text-primary hover:text-primary-hover transition-colors">
+              See all
             </Link>
           </div>
           <div className="mt-4 space-y-1">
@@ -106,7 +106,7 @@ export default function DashboardOverview() {
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Solicitudes abiertas</h2>
+          <h2 className="text-lg font-semibold text-foreground">Open requests</h2>
           <div className="mt-4 space-y-2">
             {mockRequests
               .filter((r) => r.status === "abierta")
@@ -114,21 +114,21 @@ export default function DashboardOverview() {
               .map((r) => (
                 <Link
                   key={r.id}
-                  href={`/solicitud/${r.id}`}
+                  href={`/request/${r.id}`}
                   className="block rounded-xl border border-border px-4 py-3 transition-colors hover:border-primary/30 hover:bg-card-hover"
                 >
                   <p className="text-sm font-medium text-foreground line-clamp-1">{r.title}</p>
                   <p className="mt-0.5 text-xs text-muted">
-                    {r.location} &middot; {r.responses} respuestas
+                    {r.location} &middot; {r.responses} responses
                   </p>
                 </Link>
               ))}
           </div>
           <Link
-            href="/explorar"
+            href="/explore"
             className="mt-4 inline-block text-sm font-medium text-primary hover:text-primary-hover transition-colors"
           >
-            Ir a explorar &rarr;
+            Go to browse &rarr;
           </Link>
         </section>
       </div>
@@ -140,18 +140,18 @@ export default function DashboardOverview() {
               <span className="text-2xl">⚠️</span>
               <div>
                 <h2 className="font-semibold text-foreground">
-                  Tienes {pendingComments.length} comentario{pendingComments.length > 1 ? "s" : ""} por moderar
+                  You have {pendingComments.length} comment{pendingComments.length > 1 ? "s" : ""} to moderate
                 </h2>
                 <p className="mt-1 text-sm text-muted">
-                  Revisiona los comentarios pendientes para mantener la comunidad sana.
+                  Review the pending comments to keep the community healthy.
                 </p>
               </div>
             </div>
             <Link
-              href="/dashboard/comentarios"
+              href="/dashboard/comments"
               className="shrink-0 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-80 transition-opacity"
             >
-              Revisar
+              Review
             </Link>
           </div>
         </section>

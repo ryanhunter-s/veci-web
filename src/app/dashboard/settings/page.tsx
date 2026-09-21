@@ -42,7 +42,7 @@ function Toggle({
   );
 }
 
-export default function ConfiguracionPage() {
+export default function SettingsPage() {
   const { data: session } = useSession();
 
   const [profile, setProfile] = useState({
@@ -88,22 +88,22 @@ export default function ConfiguracionPage() {
   return (
     <div className="space-y-6 pb-20">
       <div>
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Configuración</h1>
-        <p className="mt-1 text-muted">Administra tu perfil, notificaciones y seguridad.</p>
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Settings</h1>
+        <p className="mt-1 text-muted">Manage your profile, notifications, and security.</p>
       </div>
 
       {status === "saved" && (
         <div className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700 animate-pop-in">
-          ✓ Cambios guardados correctamente.
+          ✓ Changes saved successfully.
         </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Perfil</h2>
+          <h2 className="text-lg font-semibold text-foreground">Profile</h2>
           <div className="mt-4 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground">Nombre</label>
+              <label className="block text-sm font-medium text-foreground">Name</label>
               <input
                 value={profile.name}
                 onChange={(e) => setProfile({ ...profile, name: e.target.value })}
@@ -120,7 +120,7 @@ export default function ConfiguracionPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Colonia o barrio</label>
+              <label className="block text-sm font-medium text-foreground">Neighborhood</label>
               <input
                 value={profile.neighborhood}
                 onChange={(e) => setProfile({ ...profile, neighborhood: e.target.value })}
@@ -131,46 +131,46 @@ export default function ConfiguracionPage() {
               onClick={saveProfile}
               className="w-full rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors"
             >
-              Guardar perfil
+              Save profile
             </button>
           </div>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Notificaciones</h2>
+          <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
           <div className="mt-3 divide-y divide-border">
             <Toggle
               checked={notifications.email}
               onChange={(v) => setNotifications({ ...notifications, email: v })}
-              label="Notificaciones por email"
-              description="Recibe un correo cuando haya novedades en tus solicitudes."
+              label="Email notifications"
+              description="Receive an email when there's news about your requests."
             />
             <Toggle
               checked={notifications.push}
               onChange={(v) => setNotifications({ ...notifications, push: v })}
-              label="Notificaciones push"
-              description="Avisos al instante desde el navegador."
+              label="Push notifications"
+              description="Instant alerts straight from your browser."
             />
             <Toggle
               checked={notifications.responses}
               onChange={(v) => setNotifications({ ...notifications, responses: v })}
-              label="Respuestas a mis solicitudes"
-              description="Avisar cuando alguien responda o acepte un trabajo."
+              label="Responses to my requests"
+              description="Notify me when someone responds or accepts a job."
             />
             <Toggle
               checked={notifications.community}
               onChange={(v) => setNotifications({ ...notifications, community: v })}
-              label="Avisos de la comunidad"
-              description="Alertas del barrio: cortes de agua, luz, reuniones."
+              label="Community alerts"
+              description="Neighborhood alerts: water cuts, power outages, meetings."
             />
           </div>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Seguridad</h2>
+          <h2 className="text-lg font-semibold text-foreground">Security</h2>
           <form onSubmit={handleSubmit(onChangePassword)} className="mt-4 space-y-4 noValidate">
             <div>
-              <label className="block text-sm font-medium text-foreground">Contraseña actual</label>
+              <label className="block text-sm font-medium text-foreground">Current password</label>
               <input
                 type="password"
                 autoComplete="current-password"
@@ -182,7 +182,7 @@ export default function ConfiguracionPage() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Nueva contraseña</label>
+              <label className="block text-sm font-medium text-foreground">New password</label>
               <input
                 type="password"
                 autoComplete="new-password"
@@ -194,7 +194,7 @@ export default function ConfiguracionPage() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Confirmar nueva contraseña</label>
+              <label className="block text-sm font-medium text-foreground">Confirm new password</label>
               <input
                 type="password"
                 autoComplete="new-password"
@@ -210,36 +210,36 @@ export default function ConfiguracionPage() {
               disabled={isSubmitting}
               className="w-full rounded-full border border-border px-6 py-2.5 text-sm font-semibold text-foreground hover:bg-muted-light transition-colors disabled:opacity-60"
             >
-              {isSubmitting ? "Cambiando..." : "Cambiar contraseña"}
+              {isSubmitting ? "Changing..." : "Change password"}
             </button>
           </form>
         </section>
 
         <section className="rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-foreground">Privacidad</h2>
+          <h2 className="text-lg font-semibold text-foreground">Privacy</h2>
           <div className="mt-3 divide-y divide-border">
             <Toggle
               checked={preferences.showOnline}
               onChange={(v) => setPreferences({ ...preferences, showOnline: v })}
-              label="Mostrar estado conectado"
-              description="Deja que otros vecinos vean si estás disponible."
+              label="Show online status"
+              description="Let other neighbors see if you're available."
             />
             <Toggle
               checked={preferences.showNeighborhood}
               onChange={(v) => setPreferences({ ...preferences, showNeighborhood: v })}
-              label="Mostrar mi colonia"
-              description="Tu barrio es visible en tus solicitudes y respuestas."
+              label="Show my neighborhood"
+              description="Your neighborhood is visible on your requests and responses."
             />
             <Toggle
               checked={preferences.anonymousSearch}
               onChange={(v) => setPreferences({ ...preferences, anonymousSearch: v })}
-              label="Modo incógnito"
-              description="Navega la comunidad sin aparecer en el directorio de vecinos."
+              label="Incognito mode"
+              description="Browse the community without appearing in the neighbors directory."
             />
           </div>
           <div className="mt-4 rounded-xl bg-muted-light px-4 py-3 text-xs text-muted">
-            Tu información solo es visible para personas de tu zona. Nunca compartimos tus datos
-            con terceros.
+            Your information is only visible to people in your area. We never share your data
+            with third parties.
           </div>
         </section>
       </div>

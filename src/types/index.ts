@@ -1,10 +1,11 @@
 export type Category =
-  | "reparaciones"
-  | "transporte"
-  | "mascotas"
-  | "compras"
-  | "servicios"
-  | "comunidad";
+  | "repairs"
+  | "transport"
+  | "pets"
+  | "groceries"
+  | "services"
+  | "community"
+  | "carpentry";
 
 export type RequestStatus = "abierta" | "en_progreso" | "completada";
 

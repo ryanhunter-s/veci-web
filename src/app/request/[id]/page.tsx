@@ -2,12 +2,12 @@ import Link from "next/link";
 import { mockRequests, categories } from "@/utils/data";
 
 const statusLabels: Record<string, { text: string; color: string }> = {
-  abierta: { text: "Abierta", color: "bg-green-100 text-green-700" },
-  en_progreso: { text: "En progreso", color: "bg-yellow-100 text-yellow-700" },
-  completada: { text: "Completada", color: "bg-gray-100 text-gray-500" },
+  abierta: { text: "Open", color: "bg-green-100 text-green-700" },
+  en_progreso: { text: "In progress", color: "bg-yellow-100 text-yellow-700" },
+  completada: { text: "Completed", color: "bg-gray-100 text-gray-500" },
 };
 
-export default async function SolicitudPage({ params }: PageProps<"/solicitud/[id]">) {
+export default async function RequestPage({ params }: PageProps<"/request/[id]">) {
   const { id } = await params;
   const request = mockRequests.find((r) => r.id === id);
 
@@ -15,9 +15,9 @@ export default async function SolicitudPage({ params }: PageProps<"/solicitud/[i
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <p className="text-5xl">😕</p>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">Solicitud no encontrada</h1>
-        <Link href="/explorar" className="mt-4 inline-block text-primary hover:text-primary-hover font-medium">
-          &larr; Volver a explorar
+        <h1 className="mt-4 text-2xl font-bold text-foreground">Request not found</h1>
+        <Link href="/explore" className="mt-4 inline-block text-primary hover:text-primary-hover font-medium">
+          &larr; Back to browse
         </Link>
       </div>
     );
@@ -27,7 +27,7 @@ export default async function SolicitudPage({ params }: PageProps<"/solicitud/[i
   const status = statusLabels[request.status];
 
   const date = new Date(request.createdAt);
-  const formattedDate = date.toLocaleDateString("es-MX", {
+  const formattedDate = date.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -37,8 +37,8 @@ export default async function SolicitudPage({ params }: PageProps<"/solicitud/[i
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <Link href="/explorar" className="text-sm text-muted hover:text-foreground transition-colors">
-        &larr; Volver
+      <Link href="/explore" className="text-sm text-muted hover:text-foreground transition-colors">
+        &larr; Back
       </Link>
 
       <div className="mt-4 rounded-2xl border border-border bg-card p-6 sm:p-8">
@@ -70,32 +70,32 @@ export default async function SolicitudPage({ params }: PageProps<"/solicitud/[i
             <span className="text-2xl">{request.author.avatar}</span>
             <div>
               <p className="font-medium text-foreground">{request.author.name}</p>
-              <p className="text-sm text-muted">Publicado por este vecino</p>
+              <p className="text-sm text-muted">Posted by this neighbor</p>
             </div>
           </div>
         </div>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <button className="flex-1 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary-hover transition-colors">
-            Quiero ayudar
+            I want to help
           </button>
           <button className="flex-1 rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-card-hover transition-colors">
-            Mensaje privado
+            Private message
           </button>
         </div>
 
         <div className="mt-6 border-t border-border pt-6">
           <h3 className="font-semibold text-foreground">
-            {request.responses} {request.responses === 1 ? "respuesta" : "respuestas"}
+            {request.responses} {request.responses === 1 ? "response" : "responses"}
           </h3>
           <div className="mt-4 space-y-4">
             <div className="rounded-xl bg-muted-light p-4">
               <div className="flex items-center gap-2">
                 <span>🧑</span>
-                <span className="font-medium text-sm text-foreground">Vecino anónimo</span>
-                <span className="text-xs text-muted">&middot; hace 2h</span>
+                <span className="font-medium text-sm text-foreground">Anonymous neighbor</span>
+                <span className="text-xs text-muted">&middot; 2h ago</span>
               </div>
-              <p className="mt-2 text-sm text-muted">Puedo ayudarte con eso, mándame un mensaje privado.</p>
+              <p className="mt-2 text-sm text-muted">I can help you with that, send me a private message.</p>
             </div>
           </div>
         </div>

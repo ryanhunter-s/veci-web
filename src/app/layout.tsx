@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Providers from "@/components/Providers";
 import AuthButton from "@/components/AuthButton";
+import { FullLogo } from "@/components/Logo";
 import "@/styles/globals.css";
 
 const geistSans = Geist({
@@ -17,41 +18,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Veci - Ayuda entre vecinos",
+    default: "Veci - Neighborly help",
     template: "%s | Veci",
   },
-  description:
-    "Plataforma de ayuda comunitaria. Pide ayuda o ofrece tu tiempo a tus vecinos en tu colonia.",
+  description: "Community help platform. Ask for help or offer your time to your neighbors in your neighborhood.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
           <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-            <nav className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-xl font-bold text-foreground"
-              >
-                <span className="text-2xl">🏘️</span> Veci
+            <nav className="flex items-center mx-auto justify-between px-4 py-3 sm:px-6 lg:px-8 max-w-[1400px]">
+              <Link href="/" className="transition-opacity sm:h-12">
+                <FullLogo />
               </Link>
               <div className="flex items-center gap-4">
-                <Link
-                  href="/explorar"
-                  className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block"
-                >
-                  Explorar
+                <Link href="/explore" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
+                  Explore
                 </Link>
-                <Link
-                  href="/nueva"
-                  className="hidden rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors sm:block"
-                >
-                  Pedir ayuda
+                <Link href="/new" className="hidden rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors sm:block">
+                  Ask for help
                 </Link>
                 <AuthButton />
               </div>
@@ -61,23 +49,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <main className="flex-1">{children}</main>
 
           <footer className="border-t border-border bg-card">
-            <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="px-4 py-8 sm:px-6 lg:px-8 mx-auto max-w-[1400px]">
               <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                <div className="flex items-center gap-2 text-lg font-bold text-foreground">
-                  <span className="text-xl">🏘️</span> Veci
-                </div>
+                <Link href="/" className="transition-opacity hover:opacity-80 sm:h-12" aria-label="Veci home">
+                  <FullLogo />
+                </Link>
                 <p className="text-sm text-muted">
-                  Ayuda entre vecinos &middot; {new Date().getFullYear()}
+                  Neighborly help &middot; {new Date().getFullYear()}
                 </p>
                 <div className="flex gap-4 text-sm text-muted">
-                  <Link href="/explorar" className="hover:text-foreground transition-colors">
-                    Explorar
+                  <Link href="/explore" className="hover:text-foreground transition-colors">
+                    Explore
                   </Link>
-                  <Link href="/nueva" className="hover:text-foreground transition-colors">
-                    Pedir ayuda
+                  <Link href="/new" className="hover:text-foreground transition-colors">
+                    Ask for help
                   </Link>
                   <Link href="/login" className="hover:text-foreground transition-colors">
-                    Iniciar sesión
+                    Sign in
                   </Link>
                 </div>
               </div>

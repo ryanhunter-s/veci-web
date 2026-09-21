@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerSchema, type RegisterValues } from "@/lib/schemas";
+import { LogoMark } from "@/components/Logo";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function RegisterPage() {
     console.log(res);
     if (!res.ok) {
       const data = await res.json();
-      setServerError(data.message ?? "Ocurrió un error al crear tu cuenta.");
+      setServerError(data.message ?? "Something went wrong while creating your account.");
       return;
     }
 
@@ -50,25 +51,25 @@ export default function RegisterPage() {
   return (
     <div className="mx-auto flex max-w-md flex-1 flex-col justify-center px-4 py-12 sm:px-6">
       <div className="text-center">
-        <span className="text-4xl">🤝</span>
+        <LogoMark className="mx-auto h-14 w-14" />
         <h1 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
-          Únete a Veci
+          Join Veci
         </h1>
         <p className="mt-1 text-muted">
-          Conecta con tu comunidad y ayúdense entre todos.
+          Connect with your community and help each other out.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5 noValidate">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-foreground">
-            Nombre
+            Name
           </label>
           <input
             id="name"
             type="text"
             autoComplete="name"
-            placeholder="Ej: María García"
+            placeholder="e.g. Maria Garcia"
             {...register("name")}
             className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
@@ -92,12 +93,12 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="neighborhood" className="block text-sm font-medium text-foreground">
-            Colonia o barrio
+            Neighborhood
           </label>
           <input
             id="neighborhood"
             type="text"
-            placeholder="Ej: Centro, Las Parcelas, Fracc. San Miguel"
+            placeholder="e.g. Centro, Las Parcelas, San Miguel"
             {...register("neighborhood")}
             className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
@@ -108,13 +109,13 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-foreground">
-            Contraseña
+            Password
           </label>
           <input
             id="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Mínimo 8 caracteres, una mayúscula y un número"
+            placeholder="At least 8 characters, a capital letter, and a number"
             {...register("password")}
             className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
@@ -125,13 +126,13 @@ export default function RegisterPage() {
 
         <div>
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground">
-            Confirmar contraseña
+            Confirm password
           </label>
           <input
             id="confirmPassword"
             type="password"
             autoComplete="new-password"
-            placeholder="Repite tu contraseña"
+            placeholder="Repeat your password"
             {...register("confirmPassword")}
             className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />
@@ -149,14 +150,14 @@ export default function RegisterPage() {
           disabled={isSubmitting}
           className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Creando tu cuenta..." : "Crear cuenta"}
+          {isSubmitting ? "Creating your account..." : "Create account"}
         </button>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">
-        ¿Ya tienes cuenta?{" "}
+        Already have an account?{" "}
         <Link href="/login" className="font-medium text-primary hover:text-primary-hover">
-          Inicia sesión
+          Sign in
         </Link>
       </p>
     </div>

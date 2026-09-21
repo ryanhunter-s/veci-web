@@ -6,14 +6,14 @@ import { formatRelativeTime } from "@/utils/format";
 import { commentStatusStyles } from "@/components/dashboard/status";
 import type { RequestComment, CommentStatus } from "@/types";
 
-export default function ComentariosPage() {
+export default function CommentsPage() {
   const [comments, setComments] = useState<RequestComment[]>(mockComments);
-  const [filter, setFilter] = useState<CommentStatus | "todos">("todos");
+  const [filter, setFilter] = useState<CommentStatus | "all">("all");
   const [replyId, setReplyId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
 
   const filtered =
-    filter === "todos" ? comments : comments.filter((c) => c.status === filter);
+    filter === "all" ? comments : comments.filter((c) => c.status === filter);
 
   function updateStatus(id: string, status: CommentStatus) {
     setComments((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
@@ -34,7 +34,7 @@ export default function ComentariosPage() {
   }
 
   const counts = {
-    todos: comments.length,
+    all: comments.length,
     pendiente: comments.filter((c) => c.status === "pendiente").length,
     aprobado: comments.filter((c) => c.status === "aprobado").length,
     oculto: comments.filter((c) => c.status === "oculto").length,
@@ -43,14 +43,14 @@ export default function ComentariosPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Comentarios</h1>
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Comments</h1>
         <p className="mt-1 text-muted">
-          Revisa, aprueba y responde los comentarios de las solicitudes.
+          Review, approve, and respond to request comments.
         </p>
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2">
-        {(Object.keys(counts) as (CommentStatus | "todos")[]).map((s) => (
+        {(Object.keys(counts) as (CommentStatus | "all")[]).map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -60,7 +60,7 @@ export default function ComentariosPage() {
                 : "bg-muted-light text-muted hover:bg-border"
             }`}
           >
-            {s === "todos" ? "Todos" : commentStatusStyles[s as CommentStatus].label} ({counts[s as CommentStatus | "todos"]})
+            {s === "all" ? "All" : commentStatusStyles[s as CommentStatus].label} ({counts[s as CommentStatus | "all"]})
           </button>
         ))}
       </div>
@@ -78,7 +78,7 @@ export default function ComentariosPage() {
                   <div>
                     <p className="text-sm font-semibold text-foreground">{comment.author}</p>
                     <p className="text-xs text-muted">
-                      En: {request?.title ?? "Solicitud eliminada"}
+                      On: {request?.title ?? "Deleted request"}
                     </p>
                   </div>
                 </div>
@@ -99,7 +99,7 @@ export default function ComentariosPage() {
                     onClick={() => updateStatus(comment.id, "aprobado")}
                     className="rounded-full bg-green-100 px-4 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-200 transition-colors"
                   >
-                    ✓ Aprobar
+                    ✓ Approve
                   </button>
                 )}
                 {comment.status !== "oculto" && (
@@ -107,7 +107,7 @@ export default function ComentariosPage() {
                     onClick={() => updateStatus(comment.id, "oculto")}
                     className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted hover:bg-card-hover transition-colors"
                   >
-                    🙈 Ocultar
+                    🙈 Hide
                   </button>
                 )}
                 <button
@@ -117,11 +117,11 @@ export default function ComentariosPage() {
                   }}
                   className="rounded-full bg-primary-light px-4 py-1.5 text-xs font-semibold text-primary hover:bg-blue-200 transition-colors"
                 >
-                  💬 Responder
+                  💬 Reply
                 </button>
                 {comment.status === "pendiente" && (
                   <span className="ml-auto text-xs text-amber-600">
-                    Esperando moderación
+                    Awaiting moderation
                   </span>
                 )}
               </div>
@@ -133,7 +133,7 @@ export default function ComentariosPage() {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendReply(comment.id)}
-                    placeholder="Escribe tu respuesta como Veci..."
+                    placeholder="Write your reply as Veci..."
                     className="flex-1 rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
                     autoFocus
                   />
@@ -141,7 +141,7 @@ export default function ComentariosPage() {
                     onClick={() => sendReply(comment.id)}
                     className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors"
                   >
-                    Enviar
+                    Send
                   </button>
                 </div>
               )}
@@ -152,8 +152,8 @@ export default function ComentariosPage() {
         {filtered.length === 0 && (
           <div className="rounded-2xl border border-dashed border-border py-16 text-center">
             <p className="text-3xl">💬</p>
-            <p className="mt-2 text-lg font-medium text-foreground">No hay comentarios</p>
-            <p className="mt-1 text-sm text-muted">Nada que moderar en esta vista por ahora.</p>
+            <p className="mt-2 text-lg font-medium text-foreground">No comments</p>
+            <p className="mt-1 text-sm text-muted">Nothing to moderate in this view for now.</p>
           </div>
         )}
       </div>

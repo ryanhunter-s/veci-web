@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
   return (
     <div className="mx-auto flex max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:px-8">
       <DashboardNav
-        userName={session.user.name ?? "Vecino"}
+        userName={session.user.name ?? "Neighbor"}
         userEmail={session.user.email ?? ""}
       />
       <main className="min-w-0 flex-1">{children}</main>

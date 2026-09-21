@@ -8,12 +8,12 @@ export async function POST(req: NextRequest) {
   const parsed = registerSchemaApi.safeParse(body);
   if (!parsed.success) {
     const firstError = parsed.error.issues[0];
-    return NextResponse.json({ message: firstError?.message ?? "Datos inválidos" }, { status: 400 });
+    return NextResponse.json({ message: firstError?.message ?? "Invalid data" }, { status: 400 });
   }
 
   const user = createUser(parsed.data);
   if (!user) {
-    return NextResponse.json({ message: "Ya existe una cuenta con este email" }, { status: 409 });
+    return NextResponse.json({ message: "An account with this email already exists" }, { status: 409 });
   }
 
   return NextResponse.json({ id: user.id, name: user.name, email: user.email, neighborhood: user.neighborhood }, { status: 201 });
