@@ -1,8 +1,8 @@
 import Link from "next/link";
-import RequestCard from "@/components/RequestCard";
+import JobListingCard from "@/components/JobListingCard";
+import WorkerCard from "@/components/WorkerCard";
 import { IconLogo } from "@/components/Logo";
-import { categories, mockRequests } from "@/utils/data";
-import { Button } from "@/components/ui/Button";
+import { categories, mockJobListings, mockWorkers } from "@/utils/data";
 
 const steps = [
   {
@@ -54,8 +54,6 @@ const testimonials = [
 ];
 
 export default function Home() {
-  const recentRequests = mockRequests.filter((r) => r.status !== "completada").slice(0, 4);
-
   return (
     <div>
       <section className="relative overflow-hidden">
@@ -121,10 +119,10 @@ export default function Home() {
                 Get help free
               </Link>
               <Link
-                href="/explore"
+                href="/jobs"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-8 py-3.5 text-base font-semibold text-(--color-abyss) backdrop-blur hover:bg-card-hover hover:-translate-y-0.5 transition-all"
               >
-                Browse requests
+                Browse jobs
               </Link>
             </div>
 
@@ -192,7 +190,7 @@ export default function Home() {
             {categories.map((cat, i) => (
               <Link
                 key={cat.id}
-                href={`/explore?category=${cat.id}`}
+                href={`/jobs?category=${cat.id}`}
                 className="animate-pop-in group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 text-center transition-all hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
                 style={{ animationDelay: `${i * 0.06}s` }}
               >
@@ -220,32 +218,62 @@ export default function Home() {
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-(--color-abyss)">Recent requests</h2>
+            <h2 className="text-3xl font-bold text-(--color-abyss)">Jobs near you</h2>
             <p className="mt-2 text-muted">
-              This is what your community is asking for today.
+              Paid work close to home — per hour, per day, per week or per project.
             </p>
           </div>
           <Link
-            href="/explore"
+            href="/jobs"
             className="hidden text-sm font-medium text-primary hover:text-primary-hover transition-colors sm:block"
           >
             See all &rarr;
           </Link>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {recentRequests.map((req, i) => (
-            <div
-              key={req.id}
-              className="animate-fade-in-up animate-pop-in"
-              style={{ animationDelay: `${0.1 + i * 0.08}s` }}
-            >
-              <RequestCard request={req} />
-            </div>
-          ))}
+          {mockJobListings
+            .filter((l) => l.status === "publicado")
+            .slice(0, 4)
+            .map((listing) => (
+              <JobListingCard key={listing.id} listing={listing} />
+            ))}
         </div>
         <div className="mt-8 text-center sm:hidden">
           <Link
-            href="/explore"
+            href="/jobs"
+            className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
+          >
+            See all &rarr;
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-(--color-abyss)">Workers seeking work</h2>
+            <p className="mt-2 text-muted">
+              Skilled neighbors ready to help — with rates up front.
+            </p>
+          </div>
+          <Link
+            href="/workers"
+            className="hidden text-sm font-medium text-primary hover:text-primary-hover transition-colors sm:block"
+          >
+            See all &rarr;
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {mockWorkers
+            .filter((w) => w.status === "disponible")
+            .slice(0, 4)
+            .map((worker) => (
+              <WorkerCard key={worker.id} worker={worker} />
+            ))}
+        </div>
+        <div className="mt-8 text-center sm:hidden">
+          <Link
+            href="/workers"
             className="text-sm font-medium text-primary hover:text-primary-hover transition-colors"
           >
             See all &rarr;
@@ -270,7 +298,7 @@ export default function Home() {
                 className="animate-fade-in-up flex flex-col rounded-2xl border border-border bg-background p-6 transition-all hover:shadow-lg hover:shadow-primary/5"
                 style={{ animationDelay: `${0.1 + i * 0.1}s` }}
               >
-                <span className="text-2xl text-accent">"</span>
+                <span className="text-2xl text-accent">&quot;</span>
                 <blockquote className="flex-1 text-sm leading-6 text-(--color-abyss)">
                   {t.quote}
                 </blockquote>

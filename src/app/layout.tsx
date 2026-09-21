@@ -35,8 +35,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <FullLogo />
               </Link>
               <div className="flex items-center gap-4">
-                <Link href="/explore" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
-                  Explore
+                <Link href="/jobs" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
+                  Jobs
+                </Link>
+                <Link href="/workers" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
+                  Workers
                 </Link>
                 <Link href="/new" className="hidden rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors sm:block">
                   Ask for help
@@ -58,8 +61,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   Neighborly help &middot; {new Date().getFullYear()}
                 </p>
                 <div className="flex gap-4 text-sm text-muted">
-                  <Link href="/explore" className="hover:text-foreground transition-colors">
-                    Explore
+                  <Link href="/jobs" className="hover:text-foreground transition-colors">
+                    Jobs
+                  </Link>
+                  <Link href="/workers" className="hover:text-foreground transition-colors">
+                    Workers
                   </Link>
                   <Link href="/new" className="hover:text-foreground transition-colors">
                     Ask for help

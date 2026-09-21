@@ -11,7 +11,7 @@ export default function NewRequestPage() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitted(true);
-    setTimeout(() => router.push("/explore"), 2000);
+    setTimeout(() => router.push("/"), 2000);
   }
 
   if (submitted) {

@@ -124,12 +124,6 @@ export default function DashboardOverview() {
                 </Link>
               ))}
           </div>
-          <Link
-            href="/explore"
-            className="mt-4 inline-block text-sm font-medium text-primary hover:text-primary-hover transition-colors"
-          >
-            Go to browse &rarr;
-          </Link>
         </section>
       </div>
 

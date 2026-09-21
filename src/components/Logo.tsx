@@ -65,12 +65,20 @@ export function FullLogo({ color = "#20B981"}: { color?: string }) {
       <g transform="matrix(1,0,0,1,430,75)">
         <g transform="matrix(1.077165,0,0,1.077165,-31.884152,221.919251)">
           <g transform="matrix(229.30573,0,0,229.30573,360.804989,0)"></g>
-          <text x="-21.448px" y="0px" fontFamily="Nunito-Black, Nunito" fontWeight="900" fontSize="229.306px">V<tspan x="125.767px 230.101px 249.821px " y="0px 0px 0px ">e c</tspan></text>
+          <text
+            x="-21.448px"
+            y="0px"
+            fontFamily="Nunito-Black, Nunito"
+            fontWeight="900"
+            fontSize="229.306px"
+            color="#142235"
+            fill="#142235"
+          >V<tspan x="125.767px 230.101px 249.821px " y="0px 0px 0px ">e c</tspan></text>
         </g>
       </g>
       <g transform="matrix(1,0,0,1,430,75)">
         <g transform="matrix(1,0,0,1,56.062489,1.062508)">
-          <path d="M373,124L373,191C373,207.006 360.006,220 344,220C327.994,220 315,207.006 315,191L315,124C315,107.994 327.994,95 344,95C360.006,95 373,107.994 373,124Z"/>
+          <path fill="#142235" d="M373,124L373,191C373,207.006 360.006,220 344,220C327.994,220 315,207.006 315,191L315,124C315,107.994 327.994,95 344,95C360.006,95 373,107.994 373,124Z"/>
         </g>
       </g>
       <g transform="matrix(1,0,0,1,430,75)">
@@ -124,6 +132,8 @@ export function TextIcon({ color = "#20B981" }: { color?: string }) {
             font-family="Nunito-Black, Nunito"
             font-weight="900"
             font-size="229.306px"
+            fill="#142235"
+            color="#142235"
           >V<tspan x="125.767px 230.101px 249.821px " y="0px 0px 0px ">e c</tspan></text>
         </g>
         <g transform="matrix(1,0,0,1,56.062489,1.062508)">
