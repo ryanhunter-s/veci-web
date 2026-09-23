@@ -97,3 +97,24 @@ export function formatJobDuration(listing: JobListing): string {
   }
   return "One-time";
 }
+
+export function normalizeLocation(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+export function isNearbyLocation(userLocation: string, zone: string, city = ""): boolean {
+  const a = normalizeLocation(userLocation || "");
+  const b = normalizeLocation(`${zone} ${city}`);
+  if (!a || !b) return false;
+  if (a === b) return true;
+  if (a.includes(b) || b.includes(a)) return true;
+
+  const tokensA = new Set(a.split(" ").filter((t) => t.length > 1 && t !== "zona"));
+  const tokensB = b.split(" ").filter((t) => t.length > 1);
+  return tokensB.some((t) => tokensA.has(t));
+}

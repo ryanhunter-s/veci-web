@@ -70,7 +70,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   <Link href="/new" className="hover:text-foreground transition-colors">
                     Ask for help
                   </Link>
-                  <Link href="/login" className="hover:text-foreground transition-colors">
+                  <Link href="/auth/login" className="hover:text-foreground transition-colors">
                     Sign in
                   </Link>
                 </div>

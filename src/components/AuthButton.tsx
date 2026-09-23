@@ -25,10 +25,10 @@ export default function AuthButton() {
 
   return (
     <div className="flex items-center gap-3">
-      <Link href="/login" className="text-sm font-medium text-muted hover:text-foreground transition-colors">
+      <Link href="/auth/login" className="text-sm font-medium text-muted hover:text-foreground transition-colors">
         Sign in
       </Link>
-      <Link href="/register" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors">
+      <Link href="/auth/register" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors">
         Join
       </Link>
     </div>

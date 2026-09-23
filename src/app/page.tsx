@@ -134,7 +134,7 @@ export default function Home() {
       </section>
 
       <section className="border-y border-border bg-card/50">
-        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 py-10 sm:px-6 lg:px-8 max-w-[1400px]">
           <div className="grid grid-cols-2 gap-8 text-center lg:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="animate-fade-in-up">
@@ -146,7 +146,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-(--color-abyss) sm:text-4xl">
             How does Veci work?
@@ -176,7 +176,7 @@ export default function Home() {
       </section>
 
       <section className="bg-gradient-to-b from-background to-primary/5 py-16 sm:py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-(--color-abyss) sm:text-4xl">
               How can we help you?
@@ -215,7 +215,7 @@ export default function Home() {
         </div>
       </div>
 
-      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-3xl font-bold text-(--color-abyss)">Jobs near you</h2>
@@ -230,13 +230,8 @@ export default function Home() {
             See all &rarr;
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {mockJobListings
-            .filter((l) => l.status === "publicado")
-            .slice(0, 4)
-            .map((listing) => (
-              <JobListingCard key={listing.id} listing={listing} />
-            ))}
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {mockJobListings.filter((l) => l.status === "publicado").slice(0, 6).map((listing) => ( <JobListingCard key={listing.id} listing={listing} /> ))}
         </div>
         <div className="mt-8 text-center sm:hidden">
           <Link
@@ -248,7 +243,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-3xl font-bold text-(--color-abyss)">Workers seeking work</h2>
@@ -263,13 +258,8 @@ export default function Home() {
             See all &rarr;
           </Link>
         </div>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
-          {mockWorkers
-            .filter((w) => w.status === "disponible")
-            .slice(0, 4)
-            .map((worker) => (
-              <WorkerCard key={worker.id} worker={worker} />
-            ))}
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {mockWorkers.filter((w) => w.status === "disponible").slice(0, 6).map((worker) => (<WorkerCard key={worker.id} worker={worker} />))}
         </div>
         <div className="mt-8 text-center sm:hidden">
           <Link
@@ -282,7 +272,7 @@ export default function Home() {
       </section>
 
       <section className="bg-card border-y border-border">
-        <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-(--color-abyss) sm:text-4xl">
               Community stories

@@ -13,7 +13,7 @@ export default async function RequestPage({ params }: PageProps<"/request/[id]">
 
   if (!request) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-4 py-20 text-center sm:px-6 lg:px-8">
         <p className="text-5xl">😕</p>
         <h1 className="mt-4 text-2xl font-bold text-foreground">Request not found</h1>
         <Link href="/" className="mt-4 inline-block text-primary hover:text-primary-hover font-medium">
@@ -36,7 +36,7 @@ export default async function RequestPage({ params }: PageProps<"/request/[id]">
   });
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <Link href="/" className="text-sm text-muted hover:text-foreground transition-colors">
         &larr; Back
       </Link>

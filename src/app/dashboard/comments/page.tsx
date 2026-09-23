@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Check, EyeOff, MessageCircle } from "lucide-react";
 import { mockComments, mockRequests } from "@/utils/data";
 import { formatRelativeTime } from "@/utils/format";
 import { commentStatusStyles } from "@/components/dashboard/status";
@@ -97,17 +98,17 @@ export default function CommentsPage() {
                 {comment.status !== "aprobado" && (
                   <button
                     onClick={() => updateStatus(comment.id, "aprobado")}
-                    className="rounded-full bg-green-100 px-4 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-200 transition-colors"
+                    className="flex items-center gap-1.5 rounded-full bg-green-100 px-4 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-200 transition-colors"
                   >
-                    ✓ Approve
+                    <Check className="h-3.5 w-3.5" /> Approve
                   </button>
                 )}
                 {comment.status !== "oculto" && (
                   <button
                     onClick={() => updateStatus(comment.id, "oculto")}
-                    className="rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted hover:bg-card-hover transition-colors"
+                    className="flex items-center gap-1.5 rounded-full border border-border px-4 py-1.5 text-xs font-medium text-muted hover:bg-card-hover transition-colors"
                   >
-                    🙈 Hide
+                    <EyeOff className="h-3.5 w-3.5" /> Hide
                   </button>
                 )}
                 <button
@@ -115,9 +116,9 @@ export default function CommentsPage() {
                     setReplyId(replyId === comment.id ? null : comment.id);
                     setReplyText("");
                   }}
-                  className="rounded-full bg-primary-light px-4 py-1.5 text-xs font-semibold text-primary hover:bg-blue-200 transition-colors"
+                  className="flex items-center gap-1.5 rounded-full bg-primary-light px-4 py-1.5 text-xs font-semibold text-primary hover:bg-blue-200 transition-colors"
                 >
-                  💬 Reply
+                  <MessageCircle className="h-3.5 w-3.5" /> Reply
                 </button>
                 {comment.status === "pendiente" && (
                   <span className="ml-auto text-xs text-amber-600">
@@ -150,9 +151,11 @@ export default function CommentsPage() {
         })}
 
         {filtered.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border py-16 text-center">
-            <p className="text-3xl">💬</p>
-            <p className="mt-2 text-lg font-medium text-foreground">No comments</p>
+          <div className="rounded-2xl border border-dashed border-border py-16 text-center animate-fade-in-up">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-muted-light">
+              <MessageCircle className="h-6 w-6 text-muted" />
+            </span>
+            <p className="mt-3 text-lg font-medium text-foreground">No comments</p>
             <p className="mt-1 text-sm text-muted">Nothing to moderate in this view for now.</p>
           </div>
         )}

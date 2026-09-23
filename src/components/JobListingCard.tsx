@@ -20,7 +20,13 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", { day: "numeric", month: "short" });
 }
 
-export default function JobListingCard({ listing }: { listing: JobListing }) {
+export default function JobListingCard({
+  listing,
+  nearby = false,
+}: {
+  listing: JobListing;
+  nearby?: boolean;
+}) {
   const cat = categories.find((c) => c.id === listing.category);
   const status = jobListingStatusStyles[listing.status];
   const applicants = listing.status === "publicado" && listing.applicationsCount > 0;
@@ -28,8 +34,13 @@ export default function JobListingCard({ listing }: { listing: JobListing }) {
   return (
     <Link
       href={`/jobs/${listing.id}`}
-      className="group block rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md hover:shadow-primary/5"
+      className="group relative block rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md hover:shadow-primary/5"
     >
+      {nearby && (
+        <span className="absolute -top-2.5 right-4 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+          📍 In your area
+        </span>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
           <span className="text-2xl">{cat?.icon}</span>

@@ -9,10 +9,36 @@ import Link from "next/link";
 import { loginSchema, type LoginValues } from "@/lib/schemas";
 import { LogoMark } from "@/components/Logo";
 
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.57 5.57 0 0 1-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3a7.16 7.16 0 0 1-10.68-3.75H1.3v3.09A11.98 11.98 0 0 0 12 24Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.39 14.34a7.2 7.2 0 0 1 0-4.68V6.57H1.3a12 12 0 0 0 0 10.86l4.09-3.09Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.84c1.76 0 3.34.6 4.58 1.79l3.44-3.44A11.83 11.83 0 0 0 12 0 11.98 11.98 0 0 0 1.3 6.57l4.09 3.09A7.15 7.15 0 0 1 12 4.84Z"
+      />
+    </svg>
+  );
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [googlePending, setGooglePending] = useState(false);
+
+  const googleError = searchParams.get("error");
 
   const {
     register,
@@ -38,6 +64,15 @@ function LoginForm() {
     const callbackUrl = searchParams.get("callbackUrl");
     router.push(callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/");
     router.refresh();
+  }
+
+  async function onGoogleSignIn() {
+    setGooglePending(true);
+    const callbackUrl = searchParams.get("callbackUrl");
+    await signIn("google", {
+      callbackUrl:
+        callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard",
+    });
   }
 
   return (
@@ -86,6 +121,13 @@ function LoginForm() {
         {serverError && (
           <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{serverError}</p>
         )}
+        {googleError && !serverError && (
+          <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
+            {googleError === "AccessDenied" || googleError === "Configuration"
+              ? "Google sign-in is not configured yet. Try with your email and password."
+              : "Google sign-in failed. Please try again."}
+          </p>
+        )}
 
         <button
           type="submit"
@@ -94,11 +136,37 @@ function LoginForm() {
         >
           {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase tracking-wider text-muted">
+            <span className="bg-background px-2">or</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onGoogleSignIn}
+          disabled={googlePending}
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-card px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-card-hover disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <GoogleIcon className="h-5 w-5" />
+          {googlePending ? "Redirecting to Google..." : "Continue with Google"}
+        </button>
+
+        <Link
+          href="/auth/register"
+          className="block w-full rounded-full border border-border bg-card px-6 py-3 text-center text-base font-semibold text-foreground hover:bg-card-hover transition-colors"
+        >
+          Create an account
+        </Link>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">
         Don&apos;t have an account yet?{" "}
-        <Link href="/register" className="font-medium text-primary hover:text-primary-hover">
+        <Link href="/auth/register" className="font-medium text-primary hover:text-primary-hover">
           Sign up free
         </Link>
       </p>

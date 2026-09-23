@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Play, Check, X, FolderOpen } from "lucide-react";
 import { mockJobs, mockRequests, categories } from "@/utils/data";
 import { formatDateTime, formatSchedule, formatRelativeTime } from "@/utils/format";
 import { jobStatusStyles } from "@/components/dashboard/status";
@@ -115,17 +116,25 @@ export default function JobsPage() {
                   {job.status !== "completada" && job.status !== "cancelada" && (
                     <button
                       onClick={() => advanceStatus(job.id)}
-                      className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover transition-colors"
+                      className="flex items-center justify-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white hover:bg-primary-hover transition-colors"
                     >
-                      {job.status === "aceptada" ? "Start job" : "Mark as completed"}
+                      {job.status === "aceptada" ? (
+                        <>
+                          <Play className="h-3.5 w-3.5" /> Start job
+                        </>
+                      ) : (
+                        <>
+                          <Check className="h-3.5 w-3.5" /> Mark as completed
+                        </>
+                      )}
                     </button>
                   )}
                   {job.status !== "cancelada" && job.status !== "completada" && (
                     <button
                       onClick={() => cancelJob(job.id)}
-                      className="rounded-full border border-border px-4 py-2 text-xs font-medium text-muted hover:bg-card-hover hover:text-danger transition-colors"
+                      className="flex items-center justify-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted hover:bg-card-hover hover:text-danger transition-colors"
                     >
-                      Cancel
+                      <X className="h-3.5 w-3.5" /> Cancel
                     </button>
                   )}
                 </div>
@@ -140,9 +149,11 @@ export default function JobsPage() {
         })}
 
         {filtered.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border py-16 text-center">
-            <p className="text-3xl">🗂️</p>
-            <p className="mt-2 text-lg font-medium text-foreground">No jobs here</p>
+          <div className="rounded-2xl border border-dashed border-border py-16 text-center animate-fade-in-up">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-muted-light">
+              <FolderOpen className="h-6 w-6 text-muted" />
+            </span>
+            <p className="mt-3 text-lg font-medium text-foreground">No jobs here</p>
             <p className="mt-1 text-sm text-muted">
               {filter === "all"
                 ? "When you accept a request it will appear in this record."

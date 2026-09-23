@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MessagesSquare } from "lucide-react";
 import { mockChats } from "@/utils/data";
 import { formatRelativeTime } from "@/utils/format";
 import type { Chat } from "@/types";
@@ -114,8 +115,10 @@ export default function ChatsPage() {
 
           {chats.length === 0 && (
             <div className="rounded-2xl border border-dashed border-border py-16 text-center">
-              <p className="text-3xl">💭</p>
-              <p className="mt-2 text-sm font-medium text-foreground">No conversations</p>
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-muted-light">
+                <MessagesSquare className="h-6 w-6 text-muted" />
+              </span>
+              <p className="mt-3 text-sm font-medium text-foreground">No conversations</p>
             </div>
           )}
         </div>
@@ -180,8 +183,10 @@ export default function ChatsPage() {
             </>
           ) : (
             <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
-              <p className="text-3xl">💬</p>
-              <p className="mt-2 font-medium text-foreground">Select a conversation</p>
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted-light">
+                <MessagesSquare className="h-6 w-6 text-muted" />
+              </span>
+              <p className="mt-3 font-medium text-foreground">Select a conversation</p>
               <p className="mt-1 text-sm text-muted">
                 Choose a chat to see the messages.
               </p>

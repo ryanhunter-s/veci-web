@@ -38,7 +38,7 @@ function WorkersContent() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div className="mx-auto max-w-[1400px]  px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Workers seeking work</h1>
@@ -146,10 +146,8 @@ function WorkersContent() {
         ))}
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {filtered.map((worker) => (
-          <WorkerCard key={worker.id} worker={worker} />
-        ))}
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        {filtered.map((worker) => ( <WorkerCard key={worker.id} worker={worker} /> ))}
       </div>
 
       {filtered.length === 0 && (
@@ -169,7 +167,7 @@ export default function WorkersPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">Workers seeking work</h1>

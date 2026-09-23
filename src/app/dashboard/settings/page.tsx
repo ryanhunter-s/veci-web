@@ -48,7 +48,8 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState({
     name: session?.user?.name ?? "María García",
     email: session?.user?.email ?? "maria@email.com",
-    neighborhood: "Centro",
+    neighborhood: session?.user?.neighborhood ?? "Centro",
+    address: session?.user?.address ?? "",
   });
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
 
@@ -126,6 +127,18 @@ export default function SettingsPage() {
                 onChange={(e) => setProfile({ ...profile, neighborhood: e.target.value })}
                 className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Address / zone</label>
+              <input
+                value={profile.address}
+                onChange={(e) => setProfile({ ...profile, address: e.target.value })}
+                placeholder="e.g. Av. Reforma, Zona 10"
+                className="mt-1.5 block w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+              />
+              <p className="mt-1 text-xs text-muted">
+                Used to highlight the closest jobs to you. Never shown publicly.
+              </p>
             </div>
             <button
               onClick={saveProfile}
