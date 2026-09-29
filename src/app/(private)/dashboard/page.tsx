@@ -211,7 +211,7 @@ export default async function DashboardOverview() {
         <section className="rounded-2xl border border-border bg-card p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-foreground">Open requests</h2>
-            <Link href="#" className="flex items-center gap-1 rounded-full bg-primary-light px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-blue-200">
+            <Link href="#" className="flex items-center gap-1 rounded-full bg-primary-light px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-primary-light/80">
               <Plus className="h-4 w-4" /> New
             </Link>
           </div>

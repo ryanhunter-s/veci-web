@@ -24,7 +24,7 @@ export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   );
 }
 
-export function FullLogo({ color = "#20B981"}: { color?: string }) {
+export function FullLogo({ color = "#059669"}: { color?: string }) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 860 420" version="1.1">
       <g transform="matrix(1,0,0,1,45,35)">
@@ -90,7 +90,7 @@ export function FullLogo({ color = "#20B981"}: { color?: string }) {
   );
 }
 
-export function IconLogo({ color = "#20B981" }: { color?: string }) {
+export function IconLogo({ color = "#059669" }: { color?: string }) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 350 420" version="1.1">
       <g transform="matrix(1,0,0,1,45,35)">
@@ -120,7 +120,7 @@ export function IconLogo({ color = "#20B981" }: { color?: string }) {
   );
 }
 
-export function TextIcon({ color = "#20B981" }: { color?: string }) {
+export function TextIcon({ color = "#059669" }: { color?: string }) {
   return (
     <svg width="100%" height="100%" viewBox="0 0 497 203" version="1.1">
       <g transform="matrix(1,0,0,1,60,-26)">

@@ -38,7 +38,6 @@ export const registerApiSchema = z.object(registerFields);
 
 export const registerSchema = registerApiSchema.extend({
   confirmPassword: z.string().min(1, "Confirm your password"),
-  captcha: z.literal(true, { message: "Please confirm you are not a robot" }),
 }).refine((data) => data.password === data.confirmPassword, {
   path: ["confirmPassword"],
   message: "Passwords don't match",

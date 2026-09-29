@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { loginSchema, type LoginValues } from "@/lib/schemas";
-import { LogoMark } from "@/components/Logo";
+import { IconLogo } from "@/components/Logo";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -78,7 +78,9 @@ function LoginForm() {
   return (
     <div className="mx-auto flex max-w-md flex-1 flex-col justify-center px-4 py-12 sm:px-6">
       <div className="text-center">
-        <LogoMark className="mx-auto h-14 w-14" />
+        <div className="mx-auto flex h-20 w-20 items-center justify-center">
+          <IconLogo />
+        </div>
         <h1 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
           Welcome back
         </h1>
@@ -155,13 +157,6 @@ function LoginForm() {
           <GoogleIcon className="h-5 w-5" />
           {googlePending ? "Redirecting to Google..." : "Continue with Google"}
         </button>
-
-        <Link
-          href="/auth/register"
-          className="block w-full rounded-full border border-border bg-card px-6 py-3 text-center text-base font-semibold text-foreground hover:bg-card-hover transition-colors"
-        >
-          Create an account
-        </Link>
       </form>
 
       <p className="mt-6 text-center text-sm text-muted">

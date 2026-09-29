@@ -116,7 +116,7 @@ export default function CommentsPage() {
                     setReplyId(replyId === comment.id ? null : comment.id);
                     setReplyText("");
                   }}
-                  className="flex items-center gap-1.5 rounded-full bg-primary-light px-4 py-1.5 text-xs font-semibold text-primary hover:bg-blue-200 transition-colors"
+                  className="flex items-center gap-1.5 rounded-full bg-primary-light px-4 py-1.5 text-xs font-semibold text-primary hover:bg-primary-light/80 transition-colors"
                 >
                   <MessageCircle className="h-3.5 w-3.5" /> Reply
                 </button>

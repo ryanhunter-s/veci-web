@@ -1,13 +1,18 @@
 import { NextResponse, NextRequest } from "next/server";
 import { registerApiSchema } from "@/lib/schemas";
-import { createPendingUser, toPublicUser } from "@/lib/users";
+import { db } from "@/server/db";
+import { users, profiles, otps } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
+import { hashPassword } from "@/server/hashPass";
+
+export interface OTPRecord {
+  code: string;
+  expiresAt: number;
+  attempts: number;
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-
-  if (body.captcha !== true) {
-    return NextResponse.json({ message: "Please confirm you are not a robot" }, { status: 400 });
-  }
 
   const parsed = registerApiSchema.safeParse(body);
   if (!parsed.success) {
@@ -15,10 +20,87 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: firstError?.message ?? "Invalid data" }, { status: 400 });
   }
 
-  const user = createPendingUser(parsed.data);
-  if (!user) {
+  const exists = await db
+    .select({
+      id: users.id,
+      email: users.email,
+    })
+    .from(users)
+    .where(eq(users.email, parsed.data.email))
+    .limit(1);
+
+  if (exists.length) {
     return NextResponse.json({ message: "An account with this email already exists" }, { status: 409 });
   }
 
-  return NextResponse.json(toPublicUser(user), { status: 201 });
+  const user = await db.insert(users).values({
+    name: parsed.data.firstName + " " + parsed.data.lastName,
+    email: parsed.data.email,
+  }).returning({
+    id: users.id,
+    email: users.email,
+  });
+
+  if (!user.length) {
+    return NextResponse.json({ message: "Failed to create user" }, { status: 500 });
+  }
+  const hashedPassword = await hashPassword(parsed.data.password);
+  
+  const profile = await db.insert(profiles).values({
+    userId: user[0].id,
+    firstName: parsed.data.firstName,
+    lastName: parsed.data.lastName,
+    phoneNumber: parsed.data.phoneNumber,
+    gender: parsed.data.gender,
+    dateOfBirth: parsed.data.dateOfBirth,
+    address: parsed.data.address,
+    city: parsed.data.city,
+    zip: parsed.data.zip,
+    neighborhood: parsed.data.neighborhood,
+    passwordHash: hashedPassword,
+    phoneVerified: false,
+    identityVerified: false,
+  }).returning({
+    id: profiles.id,
+    userId: profiles.userId,
+    firstName: profiles.firstName,
+    lastName: profiles.lastName,
+    phoneNumber: profiles.phoneNumber,
+    gender: profiles.gender,
+    dateOfBirth: profiles.dateOfBirth,
+    address: profiles.address,
+    city: profiles.city,
+    zip: profiles.zip,
+    neighborhood: profiles.neighborhood,
+    phoneVerified: profiles.phoneVerified,
+    identityVerified: profiles.identityVerified,
+  });
+
+  if (!profile.length) {
+    return NextResponse.json({ message: "Failed to create profile" }, { status: 500 });
+  }
+
+  const expirationTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
+  const expirationTimePhone = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+  const codeEmail = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit code
+  const codePhone = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit code
+  
+  const sendEmailVerification = await db.insert(otps).values([{
+    userId: user[0].id,
+    channel: 'email',
+    code: codeEmail,
+    attempts: 0,
+    expiresAt: expirationTime,
+  }, {
+    userId: user[0].id,
+    channel: 'phone',
+    code: codePhone,
+    attempts: 0,
+    expiresAt: expirationTimePhone, 
+  }]);
+
+  // Send email code
+  // Send phone code
+
+  return NextResponse.json({...profile[0], emailOtp: codeEmail, phoneOtp: codePhone}, { status: 200 });
 }

@@ -13,7 +13,6 @@ export function CustomDrizzleAdapter(): Adapter {
 
   return {
     ...baseAdapter,
-
     async createUser(profile) {
       const existingUser = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.email, profile?.email ?? ""),
@@ -31,11 +30,8 @@ export function CustomDrizzleAdapter(): Adapter {
 
       const newUser = await baseAdapter?.createUser?.(profile);
 
-      return {
-        ...newUser,
-      } as AdapterUser;
+      return { ...newUser } as AdapterUser;
     },
-
     async linkAccount(account) {
       const existingAccount = await db.query.accounts.findFirst({
         where: (acc, { and, eq }) =>

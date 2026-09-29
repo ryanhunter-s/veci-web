@@ -59,7 +59,10 @@ export default function RegisterPage() {
 
   async function onSubmitProfile(values: RegisterValues) {
     setServerError(null);
-    credentialsRef.current = { email: values.email, password: values.password };
+    credentialsRef.current = {
+      email: values.email,
+      password: values.password
+    };
 
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -333,27 +336,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card px-4 py-3">
-            <input
-              type="checkbox"
-              checked={watch("captcha") === true}
-              onChange={(e) =>
-                setValue("captcha", e.target.checked as true, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
-              className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
-            />
-            <div>
-              <span className="block text-sm font-medium text-foreground">I am not a robot</span>
-              <span className="block text-xs text-muted">
-                Demo captcha (no external service). Real CAPTCHA comes later.
-              </span>
-            </div>
-          </label>
-          {errors.captcha && <p className="text-sm text-danger">{errors.captcha.message}</p>}
-
           {serverError && (
             <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{serverError}</p>
           )}
@@ -361,7 +343,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full rounded-full mt-10 bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Creating your account..." : "Create account"}
           </button>
@@ -445,14 +427,11 @@ function OtpStep({
     setNotice(null);
     setSending(true);
     try {
-      const res = await fetch(
-        channel === "email" ? "/api/auth/verify-email" : "/api/auth/verify-phone",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: userId, otp }),
-        },
-      );
+      const res = await fetch(channel === "email" ? "/api/auth/verify-email" : "/api/auth/verify-phone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId, otp }),
+      });
       const data = await res.json();
       if (!res.ok) {
         setError(data.message ?? "Could not verify the code.");

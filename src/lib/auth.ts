@@ -2,10 +2,13 @@ import NextAuth from "next-auth";
 import { findUserByCredentials } from "@/lib/users";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-// import { CustomDrizzleAdapter } from "@/lib/customDrizzleAdapter";
+import { CustomDrizzleAdapter } from "@/lib/customDrizzleAdapter";
+import { db } from "@/server/db";
+import { profiles, users } from "@/server/db/schema";
+import { eq } from "drizzle-orm";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // adapter: CustomDrizzleAdapter(),
+  adapter: CustomDrizzleAdapter(),
   providers: [
     Google({
       authorization: {
@@ -53,19 +56,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return !!auth;
     },
     signIn: async ({ user, account }) => {
+      if (account?.provider === "google") {        
+        return true;
+      }
+
       return true;
     },
     jwt: async ({ user, token }) => {
       if (user) {
+        const usersRes = await db
+          .select({
+            id: users.id,
+            emailVerified: users.emailVerified
+          })
+          .from(users)
+          .where(eq(users.id, user.id ?? ""))
+
+        const profile = await db
+          .select({
+            id: profiles.id,
+            phoneVerified: profiles.phoneVerified,
+            identityVerified: profiles.identityVerified,
+          })
+          .from(profiles)
+          .where(eq(profiles.id, user.id ?? ""));
+
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        token.neighborhood = (user as { neighborhood?: string }).neighborhood;
-        token.address = (user as { address?: string }).address;
-        token.phoneNumber = (user as { phoneNumber?: string }).phoneNumber;
-        token.isEmailVerified = (user as { isEmailVerified?: boolean }).isEmailVerified;
-        token.phoneVerified = (user as { phoneVerified?: boolean }).phoneVerified;
-        token.identityVerified = (user as { identityVerified?: boolean }).identityVerified;
+        token.isEmailVerified = usersRes[0]?.emailVerified !== null;
+        token.phoneVerified = profile[0]?.phoneVerified == true ? true : false;
+        token.identityVerified = profile[0]?.identityVerified == true ? true : false;
       }
       return token;
     },
@@ -74,12 +95,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
-        session.user.neighborhood = token.neighborhood as string | undefined;
-        session.user.address = token.address as string | undefined;
-        session.user.phoneNumber = token.phoneNumber as string | undefined;
-        session.user.isEmailVerified = token.isEmailVerified as boolean | undefined;
-        session.user.phoneVerified = token.phoneVerified as boolean | undefined;
-        session.user.identityVerified = token.identityVerified as boolean | undefined;
+        session.user.isEmailVerified = token.isEmailVerified as boolean;
+        session.user.phoneVerified = token.phoneVerified as boolean;
+        session.user.identityVerified = token.identityVerified as boolean;
       }
       return session;
     },
