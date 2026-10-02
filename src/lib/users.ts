@@ -1,5 +1,5 @@
 export type Gender = "male" | "female" | "other";
-export type IdentityDocType = "dpi" | "passport";
+export type IdentityDocType = "national_id" | "passport" | "drivers_license" | "residence_permit";
 
 export interface OTPRecord {
   code: string;

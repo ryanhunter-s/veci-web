@@ -8,6 +8,27 @@
       "when": 1790277475249,
       "tag": "0000_empty_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790802740488,
+      "tag": "0001_thin_cammi",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790877878112,
+      "tag": "0002_great_whiplash",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790891423709,
+      "tag": "0003_add_comments_notifications_and_chat",
+      "breakpoints": true
     }
   ]
 }

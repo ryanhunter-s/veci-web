@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerSchema, type RegisterValues } from "@/lib/schemas";
 import { IconLogo } from "@/components/Logo";
+import IdentityVerifyForm from "@/components/IdentityVerifyForm";
 import { Check } from "lucide-react";
 
 type Step = "profile" | "email" | "phone" | "identity";
@@ -38,8 +39,6 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -194,7 +193,7 @@ export default function RegisterPage() {
                 {...register("gender")}
                 className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
               >
-                <option value="">Select…</option>
+                <option value="">Selectâ€¦</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
@@ -377,21 +376,34 @@ export default function RegisterPage() {
       )}
 
       {step === "identity" && pendingUser && (
-        <IdentityStep
-          userId={pendingUser.id}
-          onDone={async () => {
-            const creds = credentialsRef.current;
-            if (creds) {
-              await signIn("credentials", {
-                email: creds.email,
-                password: creds.password,
-                redirect: false,
-              });
-            }
-            router.push("/");
-            router.refresh();
-          }}
-        />
+        <>
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-foreground">Validate your identity</h2>
+            <p className="mt-1 text-sm text-muted">
+              Upload a photo of your government-issued ID (national ID, passport, driver's license or
+              residence permit). In this demo the document
+              is stored in memory only â€” in production it is uploaded to protected storage and reviewed.
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <IdentityVerifyForm
+              userId={pendingUser.id}
+              onDone={async () => {
+                const creds = credentialsRef.current;
+                if (creds) {
+                  await signIn("credentials", {
+                    email: creds.email,
+                    password: creds.password,
+                    redirect: false,
+                  });
+                }
+                router.push("/");
+                router.refresh();
+              }}
+            />
+          </div>
+        </>
       )}
 
       <p className="mt-6 text-center text-sm text-muted">
@@ -506,152 +518,4 @@ function OtpStep({
       </p>
     </div>
   );
-}
-
-function IdentityStep({
-  userId,
-  onDone,
-}: {
-  userId: string;
-  onDone: () => void;
-}) {
-  const [docType, setDocType] = useState<"dpi" | "passport" | "">("");
-  const [docNumber, setDocNumber] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
-
-  async function submit() {
-    setError(null);
-    if (!docType) {
-      setError("Select a document type.");
-      return;
-    }
-    if (!file) {
-      setError("Upload a photo of your document.");
-      return;
-    }
-    if (file.size > 3 * 1024 * 1024) {
-      setError("The document photo must be under 3 MB.");
-      return;
-    }
-
-    const docContent = await fileToDataUrl(file);
-    setSending(true);
-    try {
-      const res = await fetch("/api/auth/verify-identity", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId, docType, docNumber, fileName: file.name, docContent }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message ?? "Could not upload the document.");
-        return;
-      }
-      onDone();
-    } finally {
-      setSending(false);
-    }
-  }
-
-  return (
-    <div className="mt-8 space-y-5">
-      <div>
-        <h2 className="text-lg font-semibold text-foreground">Validate your identity</h2>
-        <p className="mt-1 text-sm text-muted">
-          Upload a photo of your government-issued ID (DPI or passport). In this demo the document
-          is stored in memory only — in production it is uploaded to protected storage and reviewed.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
-        <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-card px-4 py-3">
-          <input
-            type="radio"
-            name="docType"
-            value="dpi"
-            checked={docType === "dpi"}
-            onChange={() => setDocType("dpi")}
-            className="h-4 w-4 accent-primary"
-          />
-          <span className="text-sm font-medium text-foreground">DPI</span>
-        </label>
-        <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-card px-4 py-3">
-          <input
-            type="radio"
-            name="docType"
-            value="passport"
-            checked={docType === "passport"}
-            onChange={() => setDocType("passport")}
-            className="h-4 w-4 accent-primary"
-          />
-          <span className="text-sm font-medium text-foreground">Passport</span>
-        </label>
-      </div>
-
-      <div>
-        <label htmlFor="docNumber" className="block text-sm font-medium text-foreground">
-          Document number
-        </label>
-        <input
-          id="docNumber"
-          type="text"
-          value={docNumber}
-          onChange={(e) => setDocNumber(e.target.value)}
-          placeholder={docType === "passport" ? "e.g. 123456789" : "e.g. 1234 56789 0101"}
-          className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="idPhoto"
-          className="block cursor-pointer rounded-xl border border-dashed border-border bg-card px-4 py-6 text-center transition-colors hover:border-primary"
-        >
-          {preview ? (
-            <img src={preview} alt="Document preview" className="mx-auto max-h-48 rounded-lg" />
-          ) : file ? (
-            <span className="text-sm font-medium text-foreground">{file.name}</span>
-          ) : (
-            <span className="text-sm text-muted">
-              Click to upload a photo of your document (JPG/PNG, max 3 MB)
-            </span>
-          )}
-          <input
-            id="idPhoto"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0] ?? null;
-              setFile(f);
-              setPreview(f ? URL.createObjectURL(f) : null);
-            }}
-          />
-        </label>
-      </div>
-
-      {error && <p className="text-sm text-danger">{error}</p>}
-
-      <button
-        type="button"
-        onClick={submit}
-        disabled={sending || !docType || !docNumber || !file}
-        className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {sending ? "Uploading..." : "Finish verification"}
-      </button>
-    </div>
-  );
-}
-
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(new Error("Could not read the file"));
-    reader.readAsDataURL(file);
-  });
 }

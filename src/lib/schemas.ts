@@ -34,7 +34,21 @@ const registerFields = {
   password: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Must include at least one capital letter").regex(/[0-9]/, "Must include at least one number"),
 } satisfies z.ZodRawShape;
 
+const profileFields = {
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  phoneNumber: z.string().trim().min(6, "Phone must be at least 6 characters"),
+  email: z.string().trim().min(1, "Email is required").email("Enter a valid email"),
+  gender: z.enum(["male", "female", "other"], { message: "Select your gender" }),
+  dateOfBirth: z.string().trim().min(1, "Date of birth is required"),
+  address: z.string().trim().min(5, "Address of residence must be at least 5 characters"),
+  city: z.string().trim().min(3, "City must be at least 3 characters"),
+  zip: z.string().trim().min(2, "ZIP / postal code is required"),
+  neighborhood: z.string().trim().min(2, "Enter your neighborhood"),
+} satisfies z.ZodRawShape;
+
 export const registerApiSchema = z.object(registerFields);
+export const profileApiSchema = z.object(profileFields);
 
 export const registerSchema = registerApiSchema.extend({
   confirmPassword: z.string().min(1, "Confirm your password"),
@@ -47,6 +61,7 @@ export const registerSchema = registerApiSchema.extend({
 });
 
 export type RegisterValues = z.infer<typeof registerSchema>;
+export type ProfileValues = z.infer<typeof profileApiSchema>;
 
 export const verifyEmailSchema = z.object({
   id: z.string().min(1, "Missing pending user id"),
@@ -59,12 +74,13 @@ export const verifyPhoneSchema = z.object({
 });
 
 export const verifyIdentitySchema = z.object({
-  id: z.string().min(1, "Missing pending user id"),
-  docType: z.enum(["dpi", "passport"], { message: "Select a document type" }),
-  docNumber: z.string().trim().min(6, "Enter a valid document number"),
-  fileName: z.string().trim().min(1, "Please upload a photo of your document"),
-  docContent: z.string().min(1, "Please upload a photo of your document"),
+  docType: z.enum(["national_id", "passport", "drivers_license", "residence_permit"], {
+    message: "Select a document type",
+  }),
+  docNumber: z.string().trim().min(6, "Enter a valid document number").max(64, "Document number is too long"),
 });
+
+export type VerifyIdentityValues = z.infer<typeof verifyIdentitySchema>;
 
 export const resendOtpSchema = z.object({
   id: z.string().min(1, "Missing pending user id"),

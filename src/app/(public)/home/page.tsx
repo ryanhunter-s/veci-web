@@ -93,10 +93,7 @@ export default function Home() {
               🏘️ Your neighborhood help network
             </span>
 
-            <h1
-              className="animate-fade-in-up mt-6 text-4xl font-bold tracking-tight sm:text-6xl text-(--color-abyss)"
-              style={{ animationDelay: "0.15s" }}
-            >
+            <h1 className="animate-fade-in-up mt-6 text-4xl font-bold tracking-tight sm:text-6xl text-(--color-abyss)" style={{ animationDelay: "0.15s" }}>
               Your neighborhood, your people.
               <br />
               <span className="animate-gradient bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -108,10 +105,7 @@ export default function Home() {
               Veci connects the people who live nearby. Ask for help with repairs, groceries, rides, and neighborhood notices, or offer your time to build a stronger community.
             </p>
 
-            <div
-              className="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
-              style={{ animationDelay: "0.45s" }}
-            >
+            <div className="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.45s" }}>
               <Link
                 href="/new"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-primary/35 hover:-translate-y-0.5 transition-all"

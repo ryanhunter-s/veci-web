@@ -17,11 +17,7 @@ export default async function DashboardLayout({ children }: LayoutProps<"/dashbo
         <Header />
       </div>
       <div className="mx-auto flex max-w-[1400px] gap-6 px-4 py-8 sm:px-6 lg:px-8">
-        <DashboardNav
-          userEmail={session.user.email ?? ""}
-          userName={session.user.name ?? "Neighbor"}
-          verified={!!session.user.identityVerified}
-        />
+        <DashboardNav userEmail={session.user.email ?? ""} userName={session.user.name ?? "Neighbor"} verified={!!session.user.identityVerified} />
         <main className="min-w-0 flex-1 animate-fade-in-up">{children}</main>
       </div>
       <div className="relative z-1">

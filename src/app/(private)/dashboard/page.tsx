@@ -24,11 +24,7 @@ export default async function DashboardOverview() {
   const activeJobs = mockJobs.filter((j) => j.status !== "completada" && j.status !== "cancelada");
   const completedJobs = mockJobs.filter((j) => j.status === "completada");
   const pendingComments = mockComments.filter((c) => c.status === "pendiente");
-  const unreadMessages = mockChats.reduce(
-    (acc, chat) =>
-      acc + chat.messages.filter((m) => !m.read && m.senderId !== chat.participantId).length,
-    0
-  );
+  const unreadMessages = mockChats.reduce((acc, chat) => acc + chat.messages.filter((m) => !m.read && m.senderId !== chat.participantId).length, 0);
 
   const activity: {
     id: string;
@@ -58,9 +54,7 @@ export default async function DashboardOverview() {
           date: m.sentAt,
         }))
     ),
-  ]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 6);
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 6);
 
   const activityIcons = {
     trabajo: <Wrench className="h-[18px] w-[18px] text-sky-600" />,
@@ -84,7 +78,7 @@ export default async function DashboardOverview() {
   const verificationSteps = [
     { label: "Email address", done: !!session?.user?.isEmailVerified, icon: Mail },
     { label: "Phone number", done: !!session?.user?.phoneVerified, icon: Phone },
-    { label: "Identity (DPI / Passport)", done: !!session?.user?.identityVerified, icon: ShieldCheck },
+    { label: "Identity document", done: !!session?.user?.identityVerified, icon: ShieldCheck },
   ];
   const verifiedCount = verificationSteps.filter((s) => s.done).length;
   const fullyVerified = verifiedCount === verificationSteps.length;

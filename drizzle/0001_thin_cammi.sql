@@ -1,0 +1,1 @@
+ALTER TABLE "veci_identity_document" ALTER COLUMN "status" SET DEFAULT 'pending';

@@ -20,6 +20,28 @@ export function formatDateTime(dateStr: string): string {
   });
 }
 
+export function maskEmail(email: string): string {
+  const trimmed = email.trim();
+  if (!trimmed) return "your email";
+
+  const at = trimmed.indexOf("@");
+  if (at <= 0) return trimmed;
+
+  const name = trimmed.slice(0, at);
+  const visible = name.slice(0, 1);
+  return `${visible}${"*".repeat(Math.max(name.length - 1, 1))}${trimmed.slice(at)}`;
+}
+
+export function maskPhone(phone: string): string {
+  const trimmed = phone.trim();
+  if (!trimmed) return "your phone";
+
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length <= 4) return trimmed;
+
+  return `${"*".repeat(digits.length - 4)}${digits.slice(-4)}`;
+}
+
 export function formatSchedule(dateStr: string): string {
   return new Date(dateStr).toLocaleString("en-US", {
     day: "numeric",
