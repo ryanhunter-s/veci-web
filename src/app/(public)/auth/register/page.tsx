@@ -3,13 +3,15 @@
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerSchema, type RegisterValues } from "@/lib/schemas";
 import { IconLogo } from "@/components/Logo";
 import IdentityVerifyForm from "@/components/IdentityVerifyForm";
 import { Check } from "lucide-react";
+import OtpVerifyForm from "@/components/OtpVerifyForm";
+import { maskEmail, maskPhone } from "@/utils/format";
+import { signIn } from "next-auth/react";
 
 type Step = "profile" | "email" | "phone" | "identity";
 
@@ -36,13 +38,7 @@ export default function RegisterPage() {
   const [pendingUser, setPendingUser] = useState<PendingUser | null>(null);
   const credentialsRef = useRef<{ email: string; password: string } | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterValues>({
-    resolver: zodResolver(registerSchema),
-  });
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterValues>({ resolver: zodResolver(registerSchema) });
 
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -58,10 +54,7 @@ export default function RegisterPage() {
 
   async function onSubmitProfile(values: RegisterValues) {
     setServerError(null);
-    credentialsRef.current = {
-      email: values.email,
-      password: values.password
-    };
+    credentialsRef.current = { email: values.email, password: values.password };
 
     const res = await fetch("/api/auth/register", {
       method: "POST",
@@ -75,8 +68,12 @@ export default function RegisterPage() {
       return;
     }
 
-    setPendingUser(data as PendingUser);
-    setStep("email");
+    const rest = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+    router.push("/dashboard");
   }
 
   function renderHeader() {
@@ -95,37 +92,9 @@ export default function RegisterPage() {
     );
   }
 
-  function renderSteps() {
-    return (
-      <ol className="mt-8 flex items-center justify-center gap-2" aria-label="Registration steps">
-        {steps.map((s, i) => {
-          const isDone = done.includes(s.key);
-          const isCurrent = step === s.key;
-          return (
-            <li key={s.key} className="flex items-center gap-2">
-              <span
-                className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-colors ${
-                  isDone
-                    ? "bg-primary text-white"
-                    : isCurrent
-                      ? "border-2 border-primary text-primary"
-                      : "border border-border text-muted"
-                }`}
-              >
-                {isDone ? <Check className="h-3.5 w-3.5" /> : i + 1}
-              </span>
-              {i < steps.length - 1 && <span className="h-px w-6 bg-border" />}
-            </li>
-          );
-        })}
-      </ol>
-    );
-  }
-
   return (
     <div className="mx-auto flex max-w-md flex-1 flex-col justify-center px-4 py-12 sm:px-6">
       {renderHeader()}
-      {renderSteps()}
 
       {step === "profile" && (
         <form onSubmit={handleSubmit(onSubmitProfile)} className="mt-8 space-y-5 noValidate">
@@ -193,7 +162,7 @@ export default function RegisterPage() {
                 {...register("gender")}
                 className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
               >
-                <option value="">Selectâ€¦</option>
+                <option value="">Select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
@@ -349,172 +318,11 @@ export default function RegisterPage() {
         </form>
       )}
 
-      {step === "email" && pendingUser && (
-        <OtpStep
-          title="Verify your email"
-          description={`We sent a 6-digit code to ${pendingUser.email}. In this demo the code is printed in the terminal where you run next dev.`}
-          channel="email"
-          userId={pendingUser.id}
-          onVerified={() => {
-            setPendingUser({ ...pendingUser, emailVerified: true });
-            setStep("phone");
-          }}
-        />
-      )}
-
-      {step === "phone" && pendingUser && (
-        <OtpStep
-          title="Verify your phone"
-          description={`We sent a 6-digit code by SMS/WhatsApp to ${pendingUser.phoneNumber}. In this demo the code is printed in the terminal where you run next dev.`}
-          channel="phone"
-          userId={pendingUser.id}
-          onVerified={() => {
-            setPendingUser({ ...pendingUser, phoneVerified: true });
-            setStep("identity");
-          }}
-        />
-      )}
-
-      {step === "identity" && pendingUser && (
-        <>
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-foreground">Validate your identity</h2>
-            <p className="mt-1 text-sm text-muted">
-              Upload a photo of your government-issued ID (national ID, passport, driver's license or
-              residence permit). In this demo the document
-              is stored in memory only â€” in production it is uploaded to protected storage and reviewed.
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <IdentityVerifyForm
-              userId={pendingUser.id}
-              onDone={async () => {
-                const creds = credentialsRef.current;
-                if (creds) {
-                  await signIn("credentials", {
-                    email: creds.email,
-                    password: creds.password,
-                    redirect: false,
-                  });
-                }
-                router.push("/");
-                router.refresh();
-              }}
-            />
-          </div>
-        </>
-      )}
-
       <p className="mt-6 text-center text-sm text-muted">
         Already have an account?{" "}
         <Link href="/auth/login" className="font-medium text-primary hover:text-primary-hover">
           Sign in
         </Link>
-      </p>
-    </div>
-  );
-}
-
-function OtpStep({
-  title,
-  description,
-  channel,
-  userId,
-  onVerified,
-}: {
-  title: string;
-  description: string;
-  channel: "email" | "phone";
-  userId: string;
-  onVerified: () => void;
-}) {
-  const [otp, setOtp] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [sending, setSending] = useState(false);
-
-  async function submit() {
-    setError(null);
-    setNotice(null);
-    setSending(true);
-    try {
-      const res = await fetch(channel === "email" ? "/api/auth/verify-email" : "/api/auth/verify-phone", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId, otp }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message ?? "Could not verify the code.");
-        return;
-      }
-      onVerified();
-    } finally {
-      setSending(false);
-    }
-  }
-
-  async function resend() {
-    setError(null);
-    setNotice(null);
-    const res = await fetch("/api/auth/resend-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: userId, channel }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.message ?? "Could not resend the code.");
-      return;
-    }
-    setNotice(data.message);
-  }
-
-  return (
-    <div className="mt-8 space-y-5">
-      <div>
-        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-        <p className="mt-1 text-sm text-muted">{description}</p>
-      </div>
-
-      <div>
-        <label htmlFor={`otp-${channel}`} className="block text-sm font-medium text-foreground">
-          Verification code
-        </label>
-        <input
-          id={`otp-${channel}`}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          maxLength={6}
-          value={otp}
-          onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-          placeholder="123456"
-          className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-center text-lg tracking-[0.5em] text-foreground placeholder:text-muted placeholder:tracking-normal focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
-        />
-        {error && <p className="mt-1.5 text-sm text-danger">{error}</p>}
-        {notice && <p className="mt-1.5 text-sm text-muted">{notice}</p>}
-      </div>
-
-      <button
-        type="button"
-        onClick={submit}
-        disabled={otp.length !== 6 || sending}
-        className="w-full rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        {sending ? "Verifying..." : "Verify"}
-      </button>
-
-      <p className="text-center text-sm text-muted">
-        Didn&apos;t get it?{" "}
-        <button
-          type="button"
-          onClick={resend}
-          className="font-medium text-primary hover:text-primary-hover"
-        >
-          Resend code
-        </button>
       </p>
     </div>
   );

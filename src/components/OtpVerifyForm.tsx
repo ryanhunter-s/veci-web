@@ -39,9 +39,9 @@ function emptyDigits(): string[] {
 
 export interface OtpVerifyFormProps {
   userId: string;
-  channel: OtpChannel;
   target: string;
   nextPath: string;
+  channel: OtpChannel;
 }
 
 export default function OtpVerifyForm({ userId, channel, target, nextPath }: OtpVerifyFormProps) {

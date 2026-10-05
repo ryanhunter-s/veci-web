@@ -62,7 +62,7 @@ function LoginForm() {
     }
 
     const callbackUrl = searchParams.get("callbackUrl");
-    router.push(callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/");
+    router.push(callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard");
     router.refresh();
   }
 
@@ -70,8 +70,7 @@ function LoginForm() {
     setGooglePending(true);
     const callbackUrl = searchParams.get("callbackUrl");
     await signIn("google", {
-      callbackUrl:
-        callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard",
+      callbackUrl: callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard",
     });
   }
 

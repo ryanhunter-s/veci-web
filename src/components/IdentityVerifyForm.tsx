@@ -126,8 +126,7 @@ export default function IdentityVerifyForm({ userId, onDone, nextPath = "/dashbo
         await onDone();
         return;
       }
-      router.push(nextPath);
-      router.refresh();
+      router.push('/dashboard');
     } catch {
       setErrors({ form: "Network error. Check your connection and try again." });
     } finally {
@@ -251,9 +250,7 @@ export default function IdentityVerifyForm({ userId, onDone, nextPath = "/dashbo
 
       <Button type="submit" size="xl" disabled={busy} className="w-full rounded-full">
         {status === "submitting" ? (
-          <>
-            <Loader2 className="animate-spin" /> Uploading...
-          </>
+          <><Loader2 className="animate-spin" /> Uploading...</>
         ) : status === "done" ? (
           <><ShieldCheck /> Verified</>
         ) : (

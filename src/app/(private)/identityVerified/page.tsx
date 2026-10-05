@@ -17,8 +17,7 @@ export default async function IdentityVerifiedPage() {
   return (
     <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center px-4 py-12 sm:px-6">
       <Link href="/" className={cn(buttonVariants({ variant: "ghost", size: "lg" }), "w-fit text-muted-foreground")}>
-        <ArrowLeft />
-        Go back
+        <ArrowLeft /> Go back
       </Link>
 
       <div className="mt-6 text-center">

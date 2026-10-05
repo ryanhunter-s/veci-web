@@ -1,11 +1,13 @@
 import NextAuth from "next-auth";
-import { findUserByCredentials } from "@/lib/users";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { CustomDrizzleAdapter } from "@/lib/customDrizzleAdapter";
 import { db } from "@/server/db";
 import { profiles, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { rateLimit, ipKey } from "@/server/rateLimit";
+import { loginSchema } from "@/lib/schemas";
+import argon2 from "argon2";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: CustomDrizzleAdapter(),
@@ -25,28 +27,59 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials, _request) => {
-        const email = credentials?.email as string | undefined;
-        const password = credentials?.password as string | undefined;
+        try {
+          const reqLike = _request as unknown as { headers?: Headers };
+          const ip = reqLike?.headers ? ipKey({ headers: reqLike.headers }) : "unknown";
+          const key = `${ip}:login`;
+          const limit = rateLimit(key, { limit: 10, windowMs: 15 * 60 * 1000 });
+          if (!limit.ok) {
+            throw new Error("Too many login attempts. Please try again later.");
+          }
+        } catch {}
+        if (!credentials?.email || !credentials?.password) throw new Error("Invalid credentials.");
 
-        if (!email || !password) {
-          return null;
+        const parseResult = loginSchema.safeParse(credentials);
+        if (!parseResult.success) throw new Error("Invalid credentials.");
+        
+        const normalizedEmail = parseResult.data.email.trim().toLowerCase();
+        const user = await db.query.users.findFirst({
+          where: (user, { ilike }) => ilike(user.email, normalizedEmail),
+          columns: {
+            id: true,
+            email: true,
+            password: true,
+            emailVerified: true,
+            guardianId: true,
+          },
+        });
+        const profile = await db.query.profiles.findFirst({
+          where: (profile, { eq }) => eq(profile.userId, user?.id ?? ""),
+        });
+
+        if (!user) throw new Error("Invalid credentials.");
+        if (!profile?.passwordHash) {
+          // Check if this email is authenticated with Google only
+          const googleAccount = await db.query.accounts.findFirst({
+            where: (a, { and, eq }) => and(eq(a.userId, user.id), eq(a.provider, "google")),
+            columns: { id: true },
+          });
+          if (googleAccount) {
+            throw new Error("GOOGLE_AUTH_ONLY");
+          }
+          throw new Error("NO_PASSWORD_ACCOUNT");
         }
 
-        const user = findUserByCredentials(email, password);
-        if (!user) {
-          return null;
-        }
+        const isMatch = await argon2.verify(profile?.passwordHash, parseResult.data.password);
+        if (!isMatch) throw new Error("Invalid credentials.");
 
         return {
           id: user.id,
-          name: user.name,
+          name: profile.firstName,
           email: user.email,
-          neighborhood: user.neighborhood,
-          address: user.address,
-          phoneNumber: user.phoneNumber,
-          isEmailVerified: user.emailVerified,
-          phoneVerified: user.phoneVerified,
-          identityVerified: user.identityVerified,
+          isEmailVerified: user.emailVerified !== null,
+          phoneVerified: profile.phoneVerified,
+          identityVerified: profile.identityVerified,
+          hasProfile: profile !== null,
         };
       },
     }),
@@ -67,7 +100,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        token.phoneNumber = user.phoneNumber;
       }
 
       const tokenUserId = typeof token.id === "string" ? token.id : undefined;
@@ -106,7 +138,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
-        session.user.phoneNumber = token.phoneNumber as string;
         session.user.isEmailVerified = token.isEmailVerified as boolean;
         session.user.phoneVerified = token.phoneVerified as boolean;
         session.user.identityVerified = token.identityVerified as boolean;

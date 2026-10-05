@@ -50,9 +50,7 @@ export async function sendOtpSms(to: string, code: string): Promise<SendSmsResul
   const result = await sendSms(to, buildOtpMessage(code));
 
   if (!result.sent && result.reason === "not_configured") {
-    console.log(
-      `[VE·CI DEV] Twilio sin configurar. SMS a ${to} omitido. Codigo: ${code}`,
-    );
+    console.log(`[VE·CI DEV] Twilio sin configurar. SMS a ${to} omitido. Codigo: ${code}`);
   }
 
   if (!result.sent && result.reason === "provider_error") {
