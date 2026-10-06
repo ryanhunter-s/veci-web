@@ -6,9 +6,8 @@ import { useSession } from "next-auth/react";
 import Avatar from "@/components/Avatar";
 import { categories } from "@/utils/data";
 import { registerWorker, newId } from "@/lib/workers-store";
-import { jobModalities } from "@/utils/jobs";
-import { modalityRateLabel } from "@/utils/workers";
-import type { Category, JobModality, WorkerProfile } from "@/types";
+import { payUnits, unitLabel } from "@/utils/jobs";
+import type { Category, PayUnit, WorkerProfile } from "@/types";
 
 const inputClass =
   "mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors";
@@ -18,9 +17,9 @@ export default function NewWorkerPage() {
   const { data: session } = useSession();
 
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  const [selectedModalities, setSelectedModalities] = useState<JobModality[]>([]);
+  const [selectedUnits, setSelectedUnits] = useState<PayUnit[]>([]);
   const [rate, setRate] = useState("");
-  const [rateModality, setRateModality] = useState<JobModality>("por_hora");
+  const [rateUnit, setRateUnit] = useState<PayUnit>("hora");
   const [negotiable, setNegotiable] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState("");
@@ -47,9 +46,9 @@ export default function NewWorkerPage() {
     );
   }
 
-  function toggleModality(m: JobModality) {
-    setSelectedModalities((prev) =>
-      prev.includes(m) ? prev.filter((x) => x !== m) : [...prev, m]
+  function toggleUnit(u: PayUnit) {
+    setSelectedUnits((prev) =>
+      prev.includes(u) ? prev.filter((x) => x !== u) : [...prev, u]
     );
   }
 
@@ -83,12 +82,12 @@ export default function NewWorkerPage() {
       setError("Select at least one category.");
       return;
     }
-    if (selectedModalities.length === 0) {
-      setError("Select at least one payment modality.");
+    if (selectedUnits.length === 0) {
+      setError("Select at least one payment unit.");
       return;
     }
-    if (!selectedModalities.includes(rateModality) && selectedModalities.length > 0) {
-      setRateModality(selectedModalities[0]);
+    if (!selectedUnits.includes(rateUnit)) {
+      setRateUnit(selectedUnits[0]);
     }
 
     const worker: WorkerProfile = {
@@ -99,11 +98,9 @@ export default function NewWorkerPage() {
       title: form.title.trim(),
       bio: form.bio.trim(),
       categories: selectedCategories,
-      modalities: selectedModalities,
+      units: selectedUnits,
       rate: parsedRate,
-      rateModality: selectedModalities.includes(rateModality)
-        ? rateModality
-        : selectedModalities[0],
+      rateUnit: selectedUnits.includes(rateUnit) ? rateUnit : selectedUnits[0],
       negotiable,
       zone: form.zone.trim(),
       city: form.city.trim() || "Ciudad de Guatemala",
@@ -260,26 +257,26 @@ export default function NewWorkerPage() {
           </div>
         </div>
 
-        {/* Modalities */}
+        {/* Payment units */}
         <div>
           <p className="text-sm font-medium text-foreground">
             How do you charge? <span className="text-danger">*</span>
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {jobModalities.map((m) => {
-              const active = selectedModalities.includes(m.id);
+            {payUnits.map((u) => {
+              const active = selectedUnits.includes(u.id);
               return (
                 <button
-                  key={m.id}
+                  key={u.id}
                   type="button"
-                  onClick={() => toggleModality(m.id)}
+                  onClick={() => toggleUnit(u.id)}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     active
                       ? "border-primary/50 bg-primary-light text-primary"
                       : "border-border bg-card text-muted hover:bg-card-hover"
                   }`}
                 >
-                  {m.label}
+                  {u.label}
                 </button>
               );
             })}
@@ -305,18 +302,18 @@ export default function NewWorkerPage() {
             />
           </div>
           <div>
-            <label htmlFor="rateModality" className="block text-sm font-medium text-foreground">
+            <label htmlFor="rateUnit" className="block text-sm font-medium text-foreground">
               Billing unit
             </label>
             <select
-              id="rateModality"
-              value={rateModality}
-              onChange={(e) => setRateModality(e.target.value as JobModality)}
+              id="rateUnit"
+              value={rateUnit}
+              onChange={(e) => setRateUnit(e.target.value as PayUnit)}
               className={inputClass}
             >
-              {jobModalities.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {modalityRateLabel(m.id)}
+              {payUnits.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {unitLabel(u.id)}
                 </option>
               ))}
             </select>

@@ -7,27 +7,24 @@ import { categories, mockJobListings, mockWorkers } from "@/utils/data";
 const steps = [
   {
     icon: "📝",
-    title: "Post what you need",
-    description:
-      "Tell your neighborhood what you need: a repair, a favor, an announcement. Your request is online in under a minute.",
+    title: "Post a gig",
+    description: "Describe the work, pay rate, schedule and location. Your gig goes live in under a minute.",
   },
   {
     icon: "🤝",
-    title: "Your community responds",
-    description:
-      "Nearby neighbors see your request and can offer help, recommend someone trustworthy, or get involved.",
+    title: "Get applications",
+    description: "People nearby see your gig and apply with their experience, availability and price.",
   },
   {
     icon: "✅",
-    title: "Resolve it together",
-    description:
-      "Coordinate through messages, get what you need done, and mark the request as completed once the problem is solved.",
+    title: "Hire, work & close",
+    description: "Chat, agree on details, get it done, and leave a review once the job is complete.",
   },
 ];
 
 const stats = [
   { value: "350+", label: "Registered neighbors" },
-  { value: "120+", label: "Completed favors" },
+  { value: "120+", label: "Completed jobs" },
   { value: "6", label: "Active neighborhoods" },
   { value: "97%", label: "Requests answered" },
 ];
@@ -90,28 +87,30 @@ export default function Home() {
               className="animate-fade-in-up inline-block rounded-full border border-primary/20 bg-primary-light/60 px-4 py-1.5 text-sm font-medium text-primary"
               style={{ animationDelay: "0.05s" }}
             >
-              🏘️ Your neighborhood help network
+              💼 Local paid jobs
             </span>
 
             <h1 className="animate-fade-in-up mt-6 text-4xl font-bold tracking-tight sm:text-6xl text-(--color-abyss)" style={{ animationDelay: "0.15s" }}>
-              Your neighborhood, your people.
+              Find paid work.
               <br />
               <span className="animate-gradient bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                Help each other.
+                Hire trusted people.
               </span>
+              <br />
+              Close to home.
             </h1>
 
             <p className="animate-fade-in-up mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted sm:text-xl" style={{ animationDelay: "0.3s" }}>
-              Veci connects the people who live nearby. Ask for help with repairs, groceries, rides, and neighborhood notices, or offer your time to build a stronger community.
+              Veci connects neighbors who need work done with people looking for paid gigs in their area.
             </p>
 
             <div className="animate-fade-in-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row" style={{ animationDelay: "0.45s" }}>
               <Link
-                href="/new"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-primary/35 hover:-translate-y-0.5 transition-all"
-              >
-                Get help free
-              </Link>
+            href="/jobs/new"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-primary/35 hover:-translate-y-0.5 transition-all"
+          >
+            Post a gig
+          </Link>
               <Link
                 href="/jobs"
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-8 py-3.5 text-base font-semibold text-(--color-abyss) backdrop-blur hover:bg-card-hover hover:-translate-y-0.5 transition-all"
@@ -121,7 +120,7 @@ export default function Home() {
             </div>
 
             <p className="animate-fade-in mt-6 text-sm text-muted" style={{ animationDelay: "0.6s" }}>
-              No cost &middot; No spam &middot; Neighbors only
+              Paid gigs &middot; Trusted neighbors &middot; Local
             </p>
           </div>
         </div>
@@ -172,13 +171,12 @@ export default function Home() {
       <section className="bg-gradient-to-b from-background to-primary/5 py-16 sm:py-20">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-(--color-abyss) sm:text-4xl">
-              How can we help you?
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted">
-              These are the categories your community uses most. Tap one to see the
-              active requests.
-            </p>
+          <h2 className="text-3xl font-bold text-(--color-abyss) sm:text-4xl">
+            Popular job categories
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted">
+            Browse paid gigs by category.
+          </p>
           </div>
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {categories.map((cat, i) => (
@@ -212,7 +210,7 @@ export default function Home() {
       <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-(--color-abyss)">Jobs near you</h2>
+            <h2 className="text-3xl font-bold text-(--color-abyss)">Gigs near you</h2>
             <p className="mt-2 text-muted">
               Paid work close to home — per hour, per day, per week or per project.
             </p>
@@ -240,9 +238,9 @@ export default function Home() {
       <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-3xl font-bold text-(--color-abyss)">Workers seeking work</h2>
+            <h2 className="text-3xl font-bold text-(--color-abyss)">Service providers</h2>
             <p className="mt-2 text-muted">
-              Skilled neighbors ready to help — with rates up front.
+              Skilled neighbors ready to work — with rates up front.
             </p>
           </div>
           <Link

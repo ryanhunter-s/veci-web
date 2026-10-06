@@ -18,10 +18,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Veci - Neighborly help",
+    default: "Veci - Paid gigs near you",
     template: "%s | Veci",
   },
-  description: "Community help platform. Ask for help or offer your time to your neighbors in your neighborhood.",
+  description: "Find local paid gigs or hire trusted neighbors for repairs, cleaning, moving, gardening and more.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

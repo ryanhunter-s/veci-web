@@ -4,7 +4,6 @@ export const ALLOWED_MIME = new Set([
   "image/webp",
   "image/avif",
   "image/gif",
-  "image/svg+xml",
   "application/pdf",
 ]);
 
@@ -15,7 +14,6 @@ export function inferMimeFromFilename(name: string): string {
   if (lower.endsWith(".webp")) return "image/webp";
   if (lower.endsWith(".avif")) return "image/avif";
   if (lower.endsWith(".gif")) return "image/gif";
-  if (lower.endsWith(".svg")) return "image/svg+xml";
   if (lower.endsWith(".pdf")) return "application/pdf";
   return "application/octet-stream";
 }

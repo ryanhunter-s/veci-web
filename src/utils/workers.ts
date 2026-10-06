@@ -1,40 +1,13 @@
-import type { JobModality, WorkerProfile, WorkerStatus } from "@/types";
-import { money } from "@/utils/jobs";
+import type { PayUnit, WorkerProfile, WorkerStatus } from "@/types";
+import { money, unitPer } from "@/utils/jobs";
 
 export const workerStatusStyles: Record<WorkerStatus, { label: string; color: string; dot: string }> = {
   disponible: { label: "Available", color: "bg-green-100 text-green-700", dot: "bg-green-500" },
   ocupado: { label: "Busy", color: "bg-gray-100 text-gray-500", dot: "bg-gray-400" },
 };
 
-export function formatWorkerRate(worker: Pick<WorkerProfile, "rate" | "rateModality">): string {
-  const base = money(worker.rate);
-  switch (worker.rateModality) {
-    case "por_hora":
-      return `${base}/hour`;
-    case "por_dia":
-      return `${base}/day`;
-    case "por_semana":
-      return `${base}/week`;
-    case "recurrente":
-      return `${base}/visit`;
-    case "por_proyecto":
-      return `${base}/project`;
-  }
-}
-
-export function modalityRateLabel(modality: JobModality): string {
-  switch (modality) {
-    case "por_hora":
-      return "Per hour";
-    case "por_dia":
-      return "Per day";
-    case "por_semana":
-      return "Per week";
-    case "recurrente":
-      return "Per visit";
-    case "por_proyecto":
-      return "Per project";
-  }
+export function formatWorkerRate(worker: Pick<WorkerProfile, "rate" | "rateUnit">): string {
+  return `${money(worker.rate)}/${unitPer(worker.rateUnit)}`;
 }
 
 export function avatarHue(name: string): number {

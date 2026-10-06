@@ -26,37 +26,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
       },
-      authorize: async (credentials, _request) => {
-        try {
-          const reqLike = _request as unknown as { headers?: Headers };
-          const ip = reqLike?.headers ? ipKey({ headers: reqLike.headers }) : "unknown";
-          const key = `${ip}:login`;
-          const limit = rateLimit(key, { limit: 10, windowMs: 15 * 60 * 1000 });
-          if (!limit.ok) {
-            throw new Error("Too many login attempts. Please try again later.");
-          }
-        } catch {}
+      authorize: async (credentials, request) => {
+        const ip = ipKey({ headers: request.headers });
+        const limit = await rateLimit(`${ip}:login`, {
+          limit: 10,
+          windowMs: 15 * 60 * 1000,
+        });
+        if (!limit.ok) {
+          throw new Error("Too many login attempts. Please try again later.");
+        }
+
         if (!credentials?.email || !credentials?.password) throw new Error("Invalid credentials.");
 
         const parseResult = loginSchema.safeParse(credentials);
         if (!parseResult.success) throw new Error("Invalid credentials.");
-        
+
         const normalizedEmail = parseResult.data.email.trim().toLowerCase();
         const user = await db.query.users.findFirst({
           where: (user, { ilike }) => ilike(user.email, normalizedEmail),
           columns: {
             id: true,
             email: true,
-            password: true,
             emailVerified: true,
-            guardianId: true,
           },
         });
+        if (!user) throw new Error("Invalid credentials.");
+
         const profile = await db.query.profiles.findFirst({
-          where: (profile, { eq }) => eq(profile.userId, user?.id ?? ""),
+          where: (profile, { eq }) => eq(profile.userId, user.id),
         });
 
-        if (!user) throw new Error("Invalid credentials.");
         if (!profile?.passwordHash) {
           // Check if this email is authenticated with Google only
           const googleAccount = await db.query.accounts.findFirst({
@@ -69,7 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("NO_PASSWORD_ACCOUNT");
         }
 
-        const isMatch = await argon2.verify(profile?.passwordHash, parseResult.data.password);
+        const isMatch = await argon2.verify(profile.passwordHash, parseResult.data.password);
         if (!isMatch) throw new Error("Invalid credentials.");
 
         return {
@@ -79,7 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           isEmailVerified: user.emailVerified !== null,
           phoneVerified: profile.phoneVerified,
           identityVerified: profile.identityVerified,
-          hasProfile: profile !== null,
+          hasProfile: true,
         };
       },
     }),

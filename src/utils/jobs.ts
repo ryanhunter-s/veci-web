@@ -1,30 +1,38 @@
-import type { JobListing, JobListingStatus, JobModality } from "@/types";
+import type { JobListing, JobListingStatus, JobSchedule, PayUnit } from "@/types";
 
-export const jobModalities: {
-  id: JobModality;
+export const payUnits: {
+  id: PayUnit;
   label: string;
   short: string;
+  per: string;
   example: string;
 }[] = [
-  { id: "por_hora", label: "Per hour", short: "Hourly", example: "e.g. Q35 per hour for 4 hours" },
-  { id: "por_dia", label: "Per day", short: "Daily", example: "e.g. Q200 per day for 3 days" },
-  { id: "por_semana", label: "Per week", short: "Weekly", example: "e.g. Q1,200 for one week" },
-  { id: "recurrente", label: "Recurring", short: "Recurring", example: "e.g. cleaning every Saturday" },
-  { id: "por_proyecto", label: "Project", short: "Project", example: "e.g. Q300 to fix a door" },
+  { id: "hora", label: "Per hour", short: "Hourly", per: "hour", example: "e.g. Q35 per hour for 4 hours" },
+  { id: "dia", label: "Per day", short: "Daily", per: "day", example: "e.g. Q200 per day for 3 days" },
+  { id: "semana", label: "Per week", short: "Weekly", per: "week", example: "e.g. Q1,200 for one week" },
+  { id: "mes", label: "Per month", short: "Monthly", per: "month", example: "e.g. Q3,500 per month" },
+  { id: "proyecto", label: "Per project", short: "Project", per: "project", example: "e.g. Q300 to fix a door" },
 ];
 
-export const jobModalityStyles: Record<JobModality, string> = {
-  por_hora: "bg-sky-100 text-sky-700",
-  por_dia: "bg-violet-100 text-violet-700",
-  por_semana: "bg-emerald-100 text-emerald-700",
+export const jobSchedules: { id: JobSchedule; label: string; short: string; example: string }[] = [
+  { id: "puntual", label: "One-time", short: "One-time", example: "e.g. move a sofa on Saturday" },
+  { id: "recurrente", label: "Recurring", short: "Recurring", example: "e.g. cleaning every Saturday" },
+];
+
+export const scheduleStyles: Record<JobSchedule, string> = {
+  puntual: "bg-slate-100 text-slate-700",
   recurrente: "bg-rose-100 text-rose-700",
-  por_proyecto: "bg-amber-100 text-amber-700",
 };
 
-export const jobListingStatusStyles: Record<
-  JobListingStatus,
-  { label: string; color: string; dot: string }
-> = {
+export const payUnitStyles: Record<PayUnit, string> = {
+  hora: "bg-sky-100 text-sky-700",
+  dia: "bg-violet-100 text-violet-700",
+  semana: "bg-emerald-100 text-emerald-700",
+  mes: "bg-indigo-100 text-indigo-700",
+  proyecto: "bg-amber-100 text-amber-700",
+};
+
+export const jobListingStatusStyles: Record<JobListingStatus, { label: string; color: string; dot: string }> = {
   publicado: { label: "Open", color: "bg-green-100 text-green-700", dot: "bg-green-500" },
   contratado: { label: "Hired", color: "bg-sky-100 text-sky-700", dot: "bg-sky-500" },
   en_progreso: { label: "In progress", color: "bg-amber-100 text-amber-700", dot: "bg-amber-500" },
@@ -36,75 +44,59 @@ export function money(amount: number): string {
   return `Q${amount.toLocaleString("en-US")}`;
 }
 
-export function modalityLabel(modality: JobModality): string {
-  return jobModalities.find((m) => m.id === modality)?.label ?? modality;
+export function unitLabel(unit: PayUnit): string {
+  return payUnits.find((u) => u.id === unit)?.label ?? unit;
+}
+
+export function unitShort(unit: PayUnit): string {
+  return payUnits.find((u) => u.id === unit)?.short ?? unit;
+}
+
+export function scheduleLabel(schedule: JobSchedule): string {
+  return jobSchedules.find((s) => s.id === schedule)?.label ?? schedule;
+}
+
+export function unitPer(unit: PayUnit): string {
+  return payUnits.find((u) => u.id === unit)?.per ?? unit;
 }
 
 export function formatJobPayment(listing: JobListing): string {
   const base = money(listing.amount);
-  switch (listing.modality) {
-    case "por_hora":
-      return listing.units ? `${base}/hour · ${listing.units} hour${listing.units > 1 ? "s" : ""}` : `${base}/hour`;
-    case "por_dia":
-      return listing.units ? `${base}/day · ${listing.units} day${listing.units > 1 ? "s" : ""}` : `${base}/day`;
-    case "por_semana":
-      return listing.units ? `${base}/week · ${listing.units} week${listing.units > 1 ? "s" : ""}` : `${base}/week`;
-    case "recurrente":
-      return `${base}/visit`;
-    case "por_proyecto":
-      return `${base} total`;
-  }
+  if (listing.unit === "proyecto") return `${base} total`;
+  const per = `${base}/${unitPer(listing.unit)}`;
+  if (!listing.units) return per;
+  return `${per} · ${listing.units} ${unitPer(listing.unit)}${listing.units > 1 ? "s" : ""}`;
 }
 
 export function formatJobPaymentShort(listing: JobListing): string {
   const base = money(listing.amount);
-  switch (listing.modality) {
-    case "por_hora":
-      return `${base}/hour`;
-    case "por_dia":
-      return `${base}/day`;
-    case "por_semana":
-      return `${base}/week`;
-    case "recurrente":
-      return `${base}/visit`;
-    case "por_proyecto":
-      return `${base}`;
-  }
+  if (listing.unit === "proyecto") return base;
+  return `${base}/${unitPer(listing.unit)}`;
 }
 
 export function formatJobDates(listing: JobListing): string {
-  const start = new Date(`${listing.startDate}T00:00:00`).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-  });
+  const start = new Date(`${listing.startDate}T00:00:00`).toLocaleDateString("en-US", { day: "numeric", month: "short" });
+
   if (!listing.endDate) return start;
-  const end = new Date(`${listing.endDate}T00:00:00`).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-  });
+  const end = new Date(`${listing.endDate}T00:00:00`).toLocaleDateString("en-US", { day: "numeric", month: "short" });
   return `${start} – ${end}`;
 }
 
 export function formatJobDuration(listing: JobListing): string {
-  if (listing.modality === "recurrente") {
-    return listing.frequency ? `${listing.frequency}` : "Recurring";
+  if (listing.schedule === "recurrente") {
+    return listing.frequency ? listing.frequency : "Recurring";
   }
-  if (listing.units && (listing.modality === "por_hora" || listing.modality === "por_dia")) {
-    return `${listing.units} ${listing.modality === "por_hora" ? "hour" : "day"}${listing.units > 1 ? "s" : ""}`;
+  if (listing.units) {
+    const per = unitPer(listing.unit);
+    return `${listing.units} ${per}${listing.units > 1 ? "s" : ""}`;
   }
-  if (listing.modality === "por_semana") {
-    return listing.units ? `${listing.units} week${listing.units > 1 ? "s" : ""}` : "1 week";
-  }
+  if (listing.unit === "mes") return "1 month";
+  if (listing.unit === "semana") return "1 week";
   return "One-time";
 }
 
 export function normalizeLocation(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 }
 
 export function isNearbyLocation(userLocation: string, zone: string, city = ""): boolean {

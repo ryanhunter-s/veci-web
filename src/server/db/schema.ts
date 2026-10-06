@@ -1,20 +1,4 @@
-import {
-  boolean,
-  timestamp,
-  text,
-  date,
-  primaryKey,
-  integer,
-  pgTable,
-  uuid,
-  index,
-  varchar,
-  bigint,
-  pgEnum,
-  numeric,
-  jsonb,
-  uniqueIndex
-} from "drizzle-orm/pg-core";
+import { boolean, timestamp, text, date, primaryKey, integer, pgTable, uuid, index, varchar, bigint, pgEnum, numeric, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 export const users = pgTable("veci_user", {
@@ -230,6 +214,12 @@ export const chatMessages = pgTable("veci_chat_messages", {
 }, (table) => [
   index("veci_chat_messages_conversation_created_idx").on(table.conversationId, table.createdAt),
 ]);
+
+export const rateLimitBuckets = pgTable("veci_rate_limit", {
+  key: text("key").primaryKey(),
+  count: integer("count").notNull().default(0),
+  resetAt: timestamp("reset_at", { withTimezone: true }).notNull(),
+});
 
 export type NewMediaLibrary = typeof mediaLibrary.$inferInsert;
 export type NewNotification = typeof notifications.$inferInsert;

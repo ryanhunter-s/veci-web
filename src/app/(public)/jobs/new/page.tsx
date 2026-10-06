@@ -5,18 +5,28 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { categories } from "@/utils/data";
 import { publishListing, newId } from "@/lib/jobs-store";
-import { jobModalities, money } from "@/utils/jobs";
-import type { Category, JobListing, JobModality } from "@/types";
+import { jobSchedules, money, payUnits, unitPer } from "@/utils/jobs";
+import type { Category, JobListing, JobSchedule, PayUnit } from "@/types";
 
-const inputClass =
-  "mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors";
+const inputClass = "mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors";
+
+const optionGrid = "mt-2 grid gap-2 sm:grid-cols-2";
+
+function optionClasses(active: boolean): string {
+  return `rounded-xl border px-4 py-3 text-left transition-colors ${active ? "border-primary/50 bg-primary-light" : "border-border bg-card hover:bg-card-hover"}`;
+}
+
+function optionTitle(active: boolean): string {
+  return `block text-sm font-semibold ${active ? "text-primary" : "text-foreground"}`;
+}
 
 export default function NewJobPage() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  const [modality, setModality] = useState<JobModality>("por_hora");
-  const [units, setUnits] = useState("");
+  const [unit, setUnit] = useState<PayUnit>("hora");
+  const [scheduleKind, setScheduleKind] = useState<JobSchedule>("puntual");
+  const [quantity, setQuantity] = useState("");
   const [frequency, setFrequency] = useState("");
   const [amount, setAmount] = useState("");
   const [negotiable, setNegotiable] = useState(false);
@@ -32,15 +42,16 @@ export default function NewJobPage() {
     description: "",
     startDate: "",
     endDate: "",
-    schedule: "",
+    timeWindow: "",
     zone: "",
     city: "Ciudad de Guatemala",
     peopleNeeded: "1",
     requirements: "",
   });
 
-  const selectedModality = jobModalities.find((m) => m.id === modality);
-  const needUnits = modality === "por_hora" || modality === "por_dia";
+  const selectedUnit = payUnits.find((u) => u.id === unit);
+  const needQuantity = unit === "hora" || unit === "dia";
+  const per = unitPer(unit);
 
   function update<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -55,12 +66,12 @@ export default function NewJobPage() {
       setError("Enter a valid payment amount.");
       return;
     }
-    const parsedUnits = needUnits ? Number(units) : undefined;
-    if (needUnits && (!Number.isFinite(parsedUnits) || !parsedUnits || parsedUnits <= 0)) {
-      setError("Enter the number of hours or days.");
+    const parsedQuantity = needQuantity ? Number(quantity) : undefined;
+    if (needQuantity && (!Number.isFinite(parsedQuantity) || !parsedQuantity || parsedQuantity <= 0)) {
+      setError(`Enter the number of ${per}s.`);
       return;
     }
-    if (modality === "recurrente" && !frequency.trim()) {
+    if (scheduleKind === "recurrente" && !frequency.trim()) {
       setError("Describe the frequency, e.g. every Saturday.");
       return;
     }
@@ -75,17 +86,18 @@ export default function NewJobPage() {
       title: form.title.trim(),
       description: form.description.trim(),
       category: form.category as Category,
-      modality,
+      unit,
+      schedule: scheduleKind,
       amount: parsedAmount,
-      units: parsedUnits,
-      frequency: modality === "recurrente" ? frequency.trim() : undefined,
+      units: parsedQuantity,
+      frequency: scheduleKind === "recurrente" ? frequency.trim() : undefined,
       negotiable,
       includesTransport,
       includesMaterials,
       includesMeals,
       startDate: form.startDate,
       endDate: form.endDate || undefined,
-      schedule: form.schedule.trim(),
+      timeWindow: form.timeWindow.trim(),
       zone: form.zone.trim(),
       city: form.city.trim() || "Ciudad de Guatemala",
       peopleNeeded: parsedPeople,
@@ -101,8 +113,8 @@ export default function NewJobPage() {
       createdAt: new Date().toISOString(),
     };
 
-    if (!form.title.trim() || !form.description.trim() || !form.startDate || !form.schedule.trim() || !form.zone.trim()) {
-      setError("Fill in all required fields (title, description, dates, schedule and zone).");
+    if (!form.title.trim() || !form.description.trim() || !form.startDate || !form.timeWindow.trim() || !form.zone.trim()) {
+      setError("Fill in all required fields (title, description, dates, time window and zone).");
       return;
     }
 
@@ -115,22 +127,22 @@ export default function NewJobPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <p className="text-5xl">🎉</p>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">Job published!</h1>
+        <h1 className="mt-4 text-2xl font-bold text-foreground">Gig published!</h1>
         <p className="mt-2 text-muted">
-          Your job is now visible for people looking for work in your area.
+          Your gig is now visible for people looking for work in your area.
         </p>
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <button
             onClick={() => router.push(`/jobs/${publishedId}`)}
             className="rounded-full bg-primary px-6 py-3 text-base font-semibold text-white hover:bg-primary-hover transition-colors"
           >
-            View your job
+            View your gig
           </button>
           <button
             onClick={() => router.push("/jobs")}
             className="rounded-full border border-border bg-card px-6 py-3 text-base font-semibold text-foreground hover:bg-card-hover transition-colors"
           >
-            Back to jobs
+            Back to gigs
           </button>
         </div>
       </div>
@@ -139,10 +151,10 @@ export default function NewJobPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-      <h1 className="text-3xl font-bold text-foreground">Post a job</h1>
+      <h1 className="text-3xl font-bold text-foreground">Post a gig</h1>
       <p className="mt-1 text-muted">
         Describe the work, the payment and the conditions. Applicants will apply through
-        the listing.
+        the gig.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -199,59 +211,74 @@ export default function NewJobPage() {
           />
         </div>
 
-        {/* Modality */}
+        {/* Pay unit */}
         <div>
           <p className="text-sm font-medium text-foreground">
-            Modality <span className="text-danger">*</span>
+            How will you pay? <span className="text-danger">*</span>
           </p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {jobModalities.map((m) => (
+          <div className={optionGrid}>
+            {payUnits.map((u) => (
               <button
                 type="button"
-                key={m.id}
+                key={u.id}
                 onClick={() => {
-                  setModality(m.id);
-                  if (m.id !== "recurrente") setFrequency("");
-                  if (m.id !== "por_hora" && m.id !== "por_dia") setUnits("");
+                  setUnit(u.id);
+                  if (u.id !== "hora" && u.id !== "dia") setQuantity("");
                 }}
-                className={`rounded-xl border px-4 py-3 text-left transition-colors ${
-                  modality === m.id
-                    ? "border-primary/50 bg-primary-light"
-                    : "border-border bg-card hover:bg-card-hover"
-                }`}
+                className={optionClasses(unit === u.id)}
               >
-                <span
-                  className={`block text-sm font-semibold ${
-                    modality === m.id ? "text-primary" : "text-foreground"
-                  }`}
-                >
-                  {m.label}
-                </span>
-                <span className="mt-0.5 block text-xs text-muted">{m.example}</span>
+                <span className={optionTitle(unit === u.id)}>{u.label}</span>
+                <span className="mt-0.5 block text-xs text-muted">{u.example}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Units or frequency */}
-        {needUnits && (
+        {/* Schedule kind */}
+        <div>
+          <p className="text-sm font-medium text-foreground">
+            Is this a one-time or ongoing job? <span className="text-danger">*</span>
+          </p>
+          <div className={optionGrid}>
+            {jobSchedules.map((s) => (
+              <button
+                type="button"
+                key={s.id}
+                onClick={() => {
+                  setScheduleKind(s.id);
+                  if (s.id !== "recurrente") setFrequency("");
+                }}
+                className={optionClasses(scheduleKind === s.id)}
+              >
+                <span className={optionTitle(scheduleKind === s.id)}>
+                  {s.id === "recurrente" ? "🔁 " : ""}
+                  {s.label}
+                </span>
+                <span className="mt-0.5 block text-xs text-muted">{s.example}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Quantity or frequency */}
+        {needQuantity && (
           <div>
-            <label htmlFor="units" className="block text-sm font-medium text-foreground">
-              Number of {modality === "por_hora" ? "hours" : "days"} <span className="text-danger">*</span>
+            <label htmlFor="quantity" className="block text-sm font-medium text-foreground">
+              Number of {per}s <span className="text-danger">*</span>
             </label>
             <input
-              id="units"
+              id="quantity"
               type="number"
               min={1}
-              required={needUnits}
-              value={units}
-              onChange={(e) => setUnits(e.target.value)}
-              placeholder={modality === "por_hora" ? "e.g. 4" : "e.g. 3"}
+              required
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder={unit === "hora" ? "e.g. 4" : "e.g. 3"}
               className={inputClass}
             />
           </div>
         )}
-        {modality === "recurrente" && (
+        {scheduleKind === "recurrente" && (
           <div>
             <label htmlFor="frequency" className="block text-sm font-medium text-foreground">
               Frequency <span className="text-danger">*</span>
@@ -271,7 +298,7 @@ export default function NewJobPage() {
         {/* Payment */}
         <div>
           <label htmlFor="amount" className="block text-sm font-medium text-foreground">
-            Payment <span className="text-danger">*</span>
+            Amount {selectedUnit ? `per ${per}` : ""} <span className="text-danger">*</span>
           </label>
           <input
             id="amount"
@@ -285,9 +312,7 @@ export default function NewJobPage() {
             className={inputClass}
           />
           <p className="mt-1 text-xs text-muted">
-            {selectedModality
-              ? `${money(Number(amount) || 0)} ${selectedModality.label.toLowerCase()} — ${selectedModality.example}`
-              : ""}
+            {selectedUnit ? `${money(Number(amount) || 0)} per ${per} — ${selectedUnit.example}` : ""}
           </p>
         </div>
 
@@ -360,18 +385,18 @@ export default function NewJobPage() {
           </div>
         </div>
 
-        {/* Schedule */}
+        {/* Time window */}
         <div>
-          <label htmlFor="schedule" className="block text-sm font-medium text-foreground">
-            Schedule <span className="text-danger">*</span>
+          <label htmlFor="timeWindow" className="block text-sm font-medium text-foreground">
+            Time window <span className="text-danger">*</span>
           </label>
           <input
-            id="schedule"
+            id="timeWindow"
             type="text"
             required
             placeholder="e.g. 8:00 AM – 12:00 PM"
-            value={form.schedule}
-            onChange={(e) => update("schedule", e.target.value)}
+            value={form.timeWindow}
+            onChange={(e) => update("timeWindow", e.target.value)}
             className={inputClass}
           />
         </div>

@@ -8,13 +8,12 @@ import { getWorker, reviewsForWorker } from "@/lib/workers-store";
 import { categories } from "@/utils/data";
 import {
   formatWorkerRate,
-  modalityRateLabel,
   trustChecks,
   trustLevel,
   trustScore,
   workerStatusStyles,
 } from "@/utils/workers";
-import { jobModalityStyles } from "@/utils/jobs";
+import { payUnitStyles, unitLabel } from "@/utils/jobs";
 import ContactPanel from "./ContactPanel";
 
 export default function WorkerDetailPage() {
@@ -109,14 +108,14 @@ export default function WorkerDetailPage() {
             })}
           </div>
 
-          <h4 className="mt-5 text-sm font-medium text-muted">Payment modalities</h4>
+          <h4 className="mt-5 text-sm font-medium text-muted">Accepted payment units</h4>
           <div className="mt-2 flex flex-wrap gap-2">
-            {worker.modalities.map((m) => (
+            {worker.units.map((u) => (
               <span
-                key={m}
-                className={`rounded-full px-3 py-1 text-sm font-medium ${jobModalityStyles[m]}`}
+                key={u}
+                className={`rounded-full px-3 py-1 text-sm font-medium ${payUnitStyles[u]}`}
               >
-                {modalityRateLabel(m)}
+                {unitLabel(u)}
               </span>
             ))}
           </div>

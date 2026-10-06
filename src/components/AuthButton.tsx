@@ -1,10 +1,11 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 
 export default function AuthButton() {
   const { data: session, status } = useSession();
+  console.log("AuthButton session:", session?.user);
 
   if (status === "loading") {
     return (<span className="h-8 w-20 animate-pulse rounded-full bg-muted-light" aria-hidden />);

@@ -6,8 +6,8 @@ import { useSearchParams } from "next/navigation";
 import WorkerCard from "@/components/WorkerCard";
 import { categories } from "@/utils/data";
 import { getAllWorkers } from "@/lib/workers-store";
-import { jobModalities } from "@/utils/jobs";
-import type { Category, JobModality, WorkerStatus } from "@/types";
+import { payUnits } from "@/utils/jobs";
+import type { Category, PayUnit, WorkerStatus } from "@/types";
 
 function WorkersContent() {
   const searchParams = useSearchParams();
@@ -16,7 +16,7 @@ function WorkersContent() {
   const [activeCategory, setActiveCategory] = useState<Category | "all">(
     initialCategory && categories.some((c) => c.id === initialCategory) ? initialCategory : "all"
   );
-  const [activeModality, setActiveModality] = useState<JobModality | "all">("all");
+  const [activeUnit, setActiveUnit] = useState<PayUnit | "all">("all");
   const [availability, setAvailability] = useState<WorkerStatus | "all">("all");
   const [search, setSearch] = useState("");
 
@@ -24,7 +24,7 @@ function WorkersContent() {
 
   const filtered = workers.filter((w) => {
     if (availability !== "all" && w.status !== availability) return false;
-    if (activeModality !== "all" && !w.modalities.includes(activeModality)) return false;
+    if (activeUnit !== "all" && !w.units.includes(activeUnit)) return false;
     if (activeCategory !== "all" && !w.categories.includes(activeCategory)) return false;
     if (
       search &&
@@ -96,26 +96,26 @@ function WorkersContent() {
 
       <div className="mt-3 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
         <button
-          onClick={() => setActiveModality("all")}
-          className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-            activeModality === "all"
+onClick={() => setActiveUnit("all")}
+            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+              activeUnit === "all"
               ? "bg-primary text-white"
               : "bg-muted-light text-muted hover:bg-border"
           }`}
         >
-          All modalities
+          All payment units
         </button>
-        {jobModalities.map((m) => (
+        {payUnits.map((u) => (
           <button
-            key={m.id}
-            onClick={() => setActiveModality(m.id)}
+            key={u.id}
+            onClick={() => setActiveUnit(u.id)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              activeModality === m.id
+              activeUnit === u.id
                 ? "bg-primary text-white"
                 : "bg-muted-light text-muted hover:bg-border"
             }`}
           >
-            {m.label}
+            {u.label}
           </button>
         ))}
       </div>
@@ -155,7 +155,7 @@ function WorkersContent() {
           <p className="text-4xl">🔍</p>
           <p className="mt-2 text-lg font-medium text-foreground">No workers found</p>
           <p className="mt-1 text-sm text-muted">
-            Try a different availability, modality, category or search term.
+            Try a different availability, payment unit, category or search term.
           </p>
         </div>
       )}

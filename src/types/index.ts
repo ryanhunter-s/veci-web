@@ -10,7 +10,9 @@ export type Category =
   | "gardening"
   | "moving";
 
-export type JobModality = "por_hora" | "por_dia" | "por_semana" | "recurrente" | "por_proyecto";
+export type PayUnit = "hora" | "dia" | "semana" | "mes" | "proyecto";
+
+export type JobSchedule = "puntual" | "recurrente";
 
 export type JobListingStatus =
   | "publicado"
@@ -24,7 +26,8 @@ export interface JobListing {
   title: string;
   description: string;
   category: Category;
-  modality: JobModality;
+  unit: PayUnit;
+  schedule: JobSchedule;
   amount: number;
   units?: number;
   frequency?: string;
@@ -34,7 +37,7 @@ export interface JobListing {
   includesMeals: boolean;
   startDate: string;
   endDate?: string;
-  schedule: string;
+  timeWindow: string;
   zone: string;
   city: string;
   peopleNeeded: number;
@@ -79,9 +82,9 @@ export interface WorkerProfile {
   title: string;
   bio: string;
   categories: Category[];
-  modalities: JobModality[];
+  units: PayUnit[];
   rate: number;
-  rateModality: JobModality;
+  rateUnit: PayUnit;
   negotiable: boolean;
   zone: string;
   city: string;

@@ -11,9 +11,11 @@ import {
   formatJobDuration,
   formatJobPayment,
   jobListingStatusStyles,
-  jobModalityStyles,
   money,
-  modalityLabel,
+  payUnitStyles,
+  scheduleLabel,
+  scheduleStyles,
+  unitLabel,
 } from "@/utils/jobs";
 import ApplyPanel from "./ApplyPanel";
 
@@ -22,13 +24,8 @@ export default function JobDetailPage() {
   const { data: session } = useSession();
   const listing = useMemo(() => getListing(id), [id]);
   const applications = useMemo(() => (listing ? applicationsForJob(listing.id) : []), [listing]);
-  const reviews = useMemo(
-    () => (listing ? mockReviews.filter((r) => r.jobId === listing.id) : []),
-    [listing]
-  );
-  const avgRating = reviews.length
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : null;
+  const reviews = useMemo(() => (listing ? mockReviews.filter((r) => r.jobId === listing.id) : []), [listing]);
+  const avgRating = reviews.length ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : null;
   const [reported, setReported] = useState(false);
 
   if (!listing) {
@@ -51,7 +48,6 @@ export default function JobDetailPage() {
 
   const cat = categories.find((c) => c.id === listing.category);
   const status = jobListingStatusStyles[listing.status];
-  const modalityColor = jobModalityStyles[listing.modality];
   const isSelf = session?.user?.name === listing.publisher.name;
   const includes: string[] = [];
   if (listing.includesTransport) includes.push("Transport included");
@@ -89,11 +85,16 @@ export default function JobDetailPage() {
           </span>
         </div>
 
-        {/* Modality and category */}
+        {/* Payment unit and category */}
         <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
-          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${modalityColor}`}>
-            {modalityLabel(listing.modality)}
+          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${payUnitStyles[listing.unit]}`}>
+            {unitLabel(listing.unit)}
           </span>
+          {listing.schedule === "recurrente" && (
+            <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${scheduleStyles[listing.schedule]}`}>
+              🔁 {scheduleLabel(listing.schedule)}
+            </span>
+          )}
           <span className="rounded-full bg-muted-light px-2.5 py-1 text-xs font-medium">
             {cat?.label}
           </span>

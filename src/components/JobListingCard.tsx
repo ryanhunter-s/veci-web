@@ -6,7 +6,10 @@ import {
   formatJobDuration,
   formatJobPaymentShort,
   jobListingStatusStyles,
-  jobModalityStyles,
+  payUnitStyles,
+  scheduleLabel,
+  scheduleStyles,
+  unitShort,
 } from "@/utils/jobs";
 
 function timeAgo(dateStr: string): string {
@@ -65,9 +68,15 @@ export default function JobListingCard({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-muted">
-        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${jobModalityStyles[listing.modality]}`}>
-          {modalityShort(listing.modality)}
+        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${payUnitStyles[listing.unit]}`}>
+          {listing.unit === "hora" ? "⏱️ " : ""}
+          {unitShort(listing.unit)}
         </span>
+        {listing.schedule === "recurrente" && (
+          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${scheduleStyles[listing.schedule]}`}>
+            🔁 {scheduleLabel(listing.schedule)}
+          </span>
+        )}
         <span className="rounded-full bg-muted-light px-2.5 py-1">{cat?.label}</span>
         <span className="flex items-center gap-1">
           <span>📅</span>
@@ -75,7 +84,7 @@ export default function JobListingCard({
         </span>
         <span className="flex items-center gap-1">
           <span>🕒</span>
-          <span className="line-clamp-1">{listing.schedule}</span>
+          <span className="line-clamp-1">{listing.timeWindow}</span>
         </span>
       </div>
 
@@ -108,19 +117,4 @@ export default function JobListingCard({
       </div>
     </Link>
   );
-}
-
-function modalityShort(modality: JobListing["modality"]): string {
-  switch (modality) {
-    case "por_hora":
-      return "⏱️ Per hour";
-    case "por_dia":
-      return "Per day";
-    case "por_semana":
-      return "Per week";
-    case "recurrente":
-      return "🔁 Recurring";
-    case "por_proyecto":
-      return "Project";
-  }
 }
