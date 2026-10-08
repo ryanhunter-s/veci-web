@@ -40,12 +40,6 @@ export default function DashboardNav({
   return (
     <>
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card lg:flex min-h-screen">
-        <Link href="/dashboard" className="flex items-center gap-2 border-b border-border px-5 py-4 text-lg font-bold text-foreground transition-opacity hover:opacity-80">
-          <div className="w-25 mx-auto">
-            <FullLogo />
-          </div>
-        </Link>
-
         <div className="flex-1 overflow-y-auto p-3">
           <p className="px-4 pb-2 pt-2 text-xs font-semibold tracking-wider text-muted uppercase">
             Menu

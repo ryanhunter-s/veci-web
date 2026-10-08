@@ -110,6 +110,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .select({
             id: users.id,
             emailVerified: users.emailVerified,
+            image: users.image,
           })
           .from(users)
           .where(eq(users.id, tokenUserId))
@@ -128,6 +129,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.hasProfile = profile.length > 0;
         token.phoneVerified = profile[0]?.phoneVerified === true;
         token.identityVerified = profile[0]?.identityVerified === true;
+        token.thumbnail = usersRes[0]?.image;
       }
 
       return token;
@@ -141,6 +143,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.phoneVerified = token.phoneVerified as boolean;
         session.user.identityVerified = token.identityVerified as boolean;
         session.user.hasProfile = token.hasProfile as boolean;
+        session.user.thumbnail = token.thumbnail as string;
       }
       return session;
     },

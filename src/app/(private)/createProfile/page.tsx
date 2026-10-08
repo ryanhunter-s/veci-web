@@ -6,8 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { profileApiSchema, type ProfileValues } from "@/lib/schemas";
 import { IconLogo } from "@/components/Logo";
+import { useSession } from "next-auth/react";
+
 
 export default function RegisterPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm<ProfileValues>({
@@ -134,6 +137,8 @@ export default function RegisterPage() {
             type="email"
             autoComplete="email"
             placeholder="tu@email.com"
+            value={session?.user?.email ?? ""}
+            readOnly
             {...register("email")}
             className="mt-1.5 block w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
           />

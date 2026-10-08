@@ -8,7 +8,8 @@ declare module "next-auth" {
     isEmailVerified?: boolean;
     phoneVerified?: boolean;
     identityVerified?: boolean;
-    hasProfile?: boolean; 
+    hasProfile?: boolean;
+    thumbnail?: string;
   }
 
   interface Session {
@@ -20,7 +21,8 @@ declare module "next-auth" {
       isEmailVerified?: boolean;
       phoneVerified?: boolean;
       identityVerified?: boolean;
-      hasProfile?: boolean; 
+      hasProfile?: boolean;
+      thumbnail?: string;
     } & DefaultSession["user"];
   }
 }

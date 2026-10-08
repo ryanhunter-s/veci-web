@@ -16,9 +16,7 @@ function buildOtpMessage(code: string): string {
   return `Tu codigo de verificacion de Veci es ${code}. Vence en ${OTP_TTL_MINUTES} minutos. No compartas este codigo con nadie.`;
 }
 
-export type SendSmsResult =
-  | { sent: true; sid: string }
-  | { sent: false; reason: "not_configured" | "invalid_number" | "provider_error"; detail?: string };
+export type SendSmsResult = | { sent: true; sid: string; code: string | number } | { sent: false; reason: "not_configured" | "invalid_number" | "provider_error"; detail?: string; code?: string | number };
 
 export async function sendSms(to: string, body: string): Promise<SendSmsResult> {
   const from = toE164(to);
@@ -36,10 +34,10 @@ export async function sendSms(to: string, body: string): Promise<SendSmsResult> 
     const message = await getTwilioClient().messages.create({
       to: from,
       from: toE164(fromNumber) ?? fromNumber,
-      body,
+      body: "sms_2fa",
     });
-
-    return { sent: true, sid: message.sid };
+    const code = message.body.match(/verification code is\s+(\d{6})/i)?.[1] ?? "";
+    return { sent: true, sid: message.sid, code: code };
   } catch (error) {
     const detail = error instanceof Error ? error.message : "Unknown Twilio error";
     return { sent: false, reason: "provider_error", detail };

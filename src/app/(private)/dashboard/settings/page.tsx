@@ -28,15 +28,9 @@ function Toggle({
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-          checked ? "bg-primary" : "bg-border"
-        }`}
+        className={`relative h-6 w-11 cursor-pointer shrink-0 rounded-full transition-colors ${checked ? "bg-primary" : "bg-border"}`}
       >
-        <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-            checked ? "translate-x-[22px]" : "translate-x-0.5"
-          }`}
-        />
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-0.4" : "translate-x-[-20px]"}`} />
       </button>
     </div>
   );
@@ -69,10 +63,13 @@ export default function SettingsPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
+    formState: {
+      errors,
+      isSubmitting
+    },
+    reset
   } = useForm<ChangePasswordValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(changePasswordSchema)
   });
 
   function saveProfile() {

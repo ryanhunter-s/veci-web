@@ -2,10 +2,14 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { BadgeCheckIcon, BellIcon, CreditCardIcon, LogOutIcon } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import Avatar from "@/components/Avatar"; 
+import { useRouter } from "next/navigation";
 
 export default function AuthButton() {
   const { data: session, status } = useSession();
-  console.log("AuthButton session:", session?.user);
+  const router = useRouter();
 
   if (status === "loading") {
     return (<span className="h-8 w-20 animate-pulse rounded-full bg-muted-light" aria-hidden />);
@@ -13,14 +17,22 @@ export default function AuthButton() {
 
   if (session?.user) {
     return (
-      <div className="flex items-center gap-3">
-        <Link href="/dashboard" className="rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-card-hover transition-colors">
-          Dashboard
-        </Link>
-        <button onClick={() => signOut({ callbackUrl: "/" })} className="hidden rounded-full px-4 py-2 text-sm font-medium text-muted hover:text-danger transition-colors sm:block">
-          Sign out
-        </button>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={
+          <button className="cursor-pointer">
+            <Avatar name={session.user.name ?? "User"} photo={session.user.image} size={35}/>
+          </button>
+        }/>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/dashboard")}><BadgeCheckIcon /> Account</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/billing")}><CreditCardIcon /> Billing</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/notifications")}><BellIcon /> Notifications</DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}><LogOutIcon /> Sign Out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 

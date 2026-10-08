@@ -87,6 +87,14 @@ export async function POST(req: NextRequest) {
     const codeEmail = generateOtpCode();
     const codePhone = generateOtpCode();
 
+    const smsResult = await sendOtpSms(parsed.data.phoneNumber, codePhone);
+
+    if (!smsResult.sent && smsResult.reason === "provider_error") {
+      console.error("[VE·CI] SMS de verificacion no enviado tras registro");
+    }
+
+    const code = `${smsResult.code}` || codePhone;
+
     await db.insert(otps).values([{
       userId: user[0].id,
       channel: 'email',
@@ -96,17 +104,12 @@ export async function POST(req: NextRequest) {
     }, {
       userId: user[0].id,
       channel: 'phone',
-      code: codePhone,
+      code: code,
       attempts: 0,
       expiresAt: expirationTimePhone,
     }]);
 
-    const smsResult = await sendOtpSms(parsed.data.phoneNumber, codePhone);
-
-    if (!smsResult.sent && smsResult.reason === "provider_error") {
-      console.error("[VE·CI] SMS de verificacion no enviado tras registro");
-    }
-
+   
     return NextResponse.json({ ...profile[0] }, { status: 200 });
   } catch (error) {
     console.log(error);

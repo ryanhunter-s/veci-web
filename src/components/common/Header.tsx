@@ -13,9 +13,6 @@ export function Header() {
           <Link href="/jobs" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
             Jobs
           </Link>
-          <Link href="/workers" className="hidden text-sm font-medium text-muted hover:text-foreground transition-colors sm:block">
-            Workers
-          </Link>
           <Link href="/new" className="hidden rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover transition-colors sm:block">
             Ask for help
           </Link>
